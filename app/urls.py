@@ -5,5 +5,7 @@ from app.views.user_views import *
 urlpatterns = [
     path('auth/signup', SignUpAPI.as_view()),
     path('auth/login', LoginAPI.as_view()),
+    path('auth/user', UserAPI.as_view()),
+
 
 ]
