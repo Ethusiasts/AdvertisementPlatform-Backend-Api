@@ -32,12 +32,12 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'app',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
     'rest_framework',
 ]
 
@@ -52,6 +52,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'advertisement_platform.urls'
+
+AUTH_USER_MODEL = 'app.User'
 
 TEMPLATES = [
     {
@@ -77,8 +79,11 @@ WSGI_APPLICATION = 'advertisement_platform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'advertisement_platform',
+        'USER': 'postgres',
+        'PASSWORD': '12345678',
+        'HOST': 'localhost'
     }
 }
 
