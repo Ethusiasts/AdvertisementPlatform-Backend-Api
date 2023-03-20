@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-
+from django.db import models
 from app.manage import CustomUserManager
+from rest_framework.authtoken.models import Token
 # User model.
 
 
@@ -19,3 +19,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class TokenGenerator():
+    def _create_token(self, user):
+        token, created = Token.objects.get_or_create(user=user)
+        return token
+
+
+user_reset_password_token = TokenGenerator()
