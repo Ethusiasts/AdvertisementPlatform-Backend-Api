@@ -14,9 +14,23 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
         return serializer.save()
 
 
+class AdvertisementDetailsAPIView(generics.RetrieveAPIView):
+    queryset = Advertisement.objects.all()
+    serializer_class = AdvertisementSerializer
+
+
 class AdvertisementUpdateAPIView(generics.UpdateAPIView):
     queryset = Advertisement.objects.all()
     serializer_class = AdvertisementSerializer
 
     def perform_update(self, serializer):
         return serializer.save()
+
+
+class AdvertisementDeleteAPIView(generics.DestroyAPIView):
+    queryset = Advertisement.objects.all()
+    serializer_class = AdvertisementSerializer
+    lookup_field = 'pk'
+
+    def perform_destroy(self, instance):
+        super().perform_destroy(instance)
