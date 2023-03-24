@@ -9,4 +9,5 @@ urlpatterns = [
     path('forgot-password', ForgotPasswordAPI.as_view()),
     path('reset-password/<token>/',
          ResetPassword, name='reset-password'),
+
 ]
