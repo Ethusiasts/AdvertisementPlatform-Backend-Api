@@ -8,6 +8,7 @@ from django.conf import settings
 from rest_framework.views import APIView
 from advertisement_platform.settings import SECRET_KEY
 from app.forms import ResetPasswordForm
+from app.helpers import find_role, valid_role
 from app.models.user_models import User, user_reset_password_token
 from app.serializers.user_serializers import ForgotPasswordSerializer, LoginSerializer, UserSerializer
 from rest_framework import status
@@ -21,14 +22,21 @@ class SignUpAPI(APIView):
         try:
             serializer = UserSerializer(data=request.data)
             if serializer.is_valid():
-                kwargs = {'first_name': request.data['first_name'],
-                          'last_name': request.data['last_name']}
-                User.objects.create_user(
-                    request.data['email'], request.data['password'], **kwargs)
+                role = request.data['role']
+                if valid_role(role):
+                    kwargs = {'first_name': request.data['first_name'],
+                              'last_name': request.data['last_name'], 'role': role}
+                    User.objects.create_user(
+                        request.data['email'], request.data['password'], **kwargs)
+                    return Response({
+                        'status': 200,
+                        'message': 'registration successful',
+                        'data': serializer.data
+                    })
                 return Response({
-                    'status': 200,
-                    'message': 'registration successful',
-                    'data': serializer.data
+                    'status': 400,
+                    'message': 'unknown user role',
+                    'data': serializer.errors
                 })
             return Response({
                 'status': 400,
@@ -36,6 +44,7 @@ class SignUpAPI(APIView):
                 'data': serializer.errors
             })
         except Exception as e:
+            print(e)
             return Response({'sucess': False}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -47,7 +56,6 @@ class LoginAPI(APIView):
                 email = request.data['email']
                 password = request.data['password']
                 user = authenticate(email=email, password=password)
-
             if user is None:
                 return Response({
                     'status': 400,
@@ -57,6 +65,7 @@ class LoginAPI(APIView):
 
             payload = ({
                 'id': user.id,
+                'role': user.role,
                 'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
             })
 
