@@ -1,5 +1,4 @@
 from django.conf import settings
-from app.models.user_models import User
 from django.core.mail import send_mail
 
 

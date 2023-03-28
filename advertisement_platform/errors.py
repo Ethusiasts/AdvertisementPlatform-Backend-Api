@@ -7,7 +7,7 @@ def sucess_200(message, data):
                     'status': 200,
                     'message': message,
                     'data': data
-                    }, status=status.HTTP_200_BAD_REQUEST)
+                    }, status=status.HTTP_200_OK)
 
 
 def sucess_login_200(message, data):
@@ -15,7 +15,7 @@ def sucess_login_200(message, data):
                     'status': 200,
                     'message': message,
                     'token': data
-                    }, status=status.HTTP_200_BAD_REQUEST)
+                    }, status=status.HTTP_200_OK)
 
 
 def sucess_201(message, data):
@@ -23,11 +23,11 @@ def sucess_201(message, data):
                     'status': 201,
                     'message': message,
                     'data': data
-                    }, status=status.HTTP_201_BAD_REQUEST)
+                    }, status=status.HTTP_201_CREATED)
 
 
 def sucess_204():
-    return Response({}, status=status.HTTP_204_BAD_REQUEST)
+    return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
 def error_400(message):
@@ -41,25 +41,25 @@ def error_401(message):
     return Response({
                     'status': 401,
                     'message': message,
-                    }, status=status.HTTP_401_BAD_REQUEST)
+                    }, status=status.HTTP_401_UNAUTHORIZED)
 
 
 def error_403(message):
     return Response({
                     'status': 403,
                     'message': message,
-                    }, status=status.HTTP_403_BAD_REQUEST)
+                    }, status=status.HTTP_403_FORBIDDEN)
 
 
 def error_404(message):
     return Response({
                     'status': 404,
                     'message': message,
-                    }, status=status.HTTP_404_BAD_REQUEST)
+                    }, status=status.HTTP_404_NOT_FOUND)
 
 
 def error_500(message):
     return Response({
-                    'status': 400,
+                    'status': 500,
                     'message': message,
-                    }, status=status.HTTP_500_BAD_REQUEST)
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
