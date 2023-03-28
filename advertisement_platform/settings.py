@@ -45,7 +45,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
-    'app',
+    'user',
     'advertisement',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'phonenumber_field'
 ]
 
 MIDDLEWARE = [
@@ -68,7 +69,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'advertisement_platform.urls'
 
-AUTH_USER_MODEL = 'app.User'
+AUTH_USER_MODEL = 'user.User'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -103,7 +104,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'advertisement_platform',
-        'USER': 'woldeamanual',
+        'USER': 'postgres',
         'PASSWORD': '12345678',
         'HOST': 'localhost'
     }
