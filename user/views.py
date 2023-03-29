@@ -5,7 +5,7 @@ import jwt
 from django.urls import reverse
 from rest_framework.views import APIView
 from advertisement_platform.settings import SECRET_KEY
-from advertisement_platform.errors import error_400, error_500, sucess_200, sucess_login_200
+from advertisement_platform.errors import error_400, error_500, success_200, success_login_200
 from user.forms import ResetPasswordForm
 from advertisement_platform.helpers import send_email, valid_role
 from user.models import User, user_reset_password_token
@@ -33,7 +33,7 @@ class SignUpAPI(APIView):
                     send_email('Activate your user account',
                                'Please click the following link to activate your account', request.data['email'], verification_link)
 
-                    return sucess_200(
+                    return success_200(
                         'Account activation link has been sent to your email. Please go ahead and click the link to activate your account', serializer.data
                     )
 
@@ -69,7 +69,7 @@ class LoginAPI(APIView):
             token = jwt.encode(payload, SECRET_KEY,
                                algorithm='HS256')
 
-            return sucess_login_200(
+            return success_login_200(
                 'You are successfully loged in.', token
             )
 
@@ -92,7 +92,7 @@ class ForgotPasswordAPI(APIView):
 
             send_email('Reset Your Password',
                        'Please click the following link to reset your password', email, reset_password_link)
-            return sucess_200(
+            return success_200(
                 'A link to reset your password has been sent to your email.'
             )
         return error_400('bad request')
@@ -105,7 +105,7 @@ def ActivateAccount(request, token):
         if user is not None and token:
             user.is_verified = True
             user.save()
-            return sucess_200('Account sucessfully activated.')
+            return success_200('Account successfully activated.')
 
         return error_400('user not found')
 

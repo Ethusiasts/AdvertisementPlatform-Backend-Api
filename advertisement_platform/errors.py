@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-def sucess_200(message, data):
+def success_200(message, data):
     return Response({
                     'status': 200,
                     'message': message,
@@ -10,7 +10,7 @@ def sucess_200(message, data):
                     }, status=status.HTTP_200_OK)
 
 
-def sucess_login_200(message, data):
+def success_login_200(message, data):
     return Response({
                     'status': 200,
                     'message': message,
@@ -18,7 +18,7 @@ def sucess_login_200(message, data):
                     }, status=status.HTTP_200_OK)
 
 
-def sucess_201(message, data):
+def success_201(message, data):
     return Response({
                     'status': 201,
                     'message': message,
@@ -26,7 +26,7 @@ def sucess_201(message, data):
                     }, status=status.HTTP_201_CREATED)
 
 
-def sucess_204():
+def success_204():
     return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
