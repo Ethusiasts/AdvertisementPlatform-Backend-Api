@@ -32,6 +32,26 @@ class UserProfile(AbstractBaseUser):
     phone_number = PhoneNumberField()
 
 
+class CustomerProfile(AbstractBaseUser):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    customer_sector = models.CharField()
+
+
+class LandownerProfile(AbstractBaseUser):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.CharField(max_length=128)
+    company_name = models.CharField(max_length=50)
+    tin_number = models.CharField(max_length=9)
+    is_verified = models.BooleanField(default=False)
+
+
+class EmployeeProfile(AbstractBaseUser):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    landowners_id = models.ForeignKey(
+        LandownerProfile, on_delete=models.CASCADE)
+    task_metrics = models.IntegerField()
+
+
 class TokenGenerator():
     def _create_token(self, user):
         token, created = Token.objects.get_or_create(user=user)
