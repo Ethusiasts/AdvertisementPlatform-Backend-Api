@@ -34,7 +34,7 @@ class UserProfile(AbstractBaseUser):
 
 class CustomerProfile(AbstractBaseUser):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    customer_sector = models.CharField()
+    customer_sector = models.CharField(max_length=50)
 
 
 class LandownerProfile(AbstractBaseUser):
