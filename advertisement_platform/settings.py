@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'user',
     'advertisement',
+    'billboard',
+    'proposal',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
