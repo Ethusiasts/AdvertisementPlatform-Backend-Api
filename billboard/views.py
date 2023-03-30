@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
 from billboard.models import Billboard
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from billboard.serializers import BillboardSerializer
 # Create your views here.
@@ -9,6 +10,7 @@ from billboard.serializers import BillboardSerializer
 
 class Billboards(generics.GenericAPIView):
     serializer_class = BillboardSerializer
+    parser_classes = (MultiPartParser,)
 
     def get(self, request):
         billboards = Billboard.objects.all()
@@ -23,6 +25,8 @@ class Billboards(generics.GenericAPIView):
 
 
 class BillboardDetail(generics.GenericAPIView):
+    serializer_class = BillboardSerializer
+    parser_classes = (MultiPartParser,)
 
     def get_billboard(self, id):
         try:

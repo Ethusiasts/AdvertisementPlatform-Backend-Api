@@ -1,6 +1,7 @@
 from django.db import models
 
-from user.models import LandownerProfile
+from landowner.models import Landowner
+
 
 # Create your models here.
 
@@ -13,6 +14,6 @@ class Billboard(models.Model):
     width = models.IntegerField()
     height = models.IntegerField()
     landowner_id = models.ForeignKey(
-        LandownerProfile, on_delete=models.CASCADE)
+        Landowner, on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     production = models.BooleanField(default=False)

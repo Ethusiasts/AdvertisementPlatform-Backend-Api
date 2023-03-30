@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'advertisement',
     'billboard',
     'proposal',
+    'customer',
+    'employee',
+    'landowner',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -56,7 +59,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'phonenumber_field'
+    'phonenumber_field',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [

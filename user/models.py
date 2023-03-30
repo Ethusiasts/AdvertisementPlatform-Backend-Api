@@ -15,11 +15,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50)
     role = models.CharField(max_length=50, blank=True)
     is_verified = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
+
+    # @property
+    # def is_staff(self):
+    #     return self.is_staff
 
     def __str__(self):
         return self.email
@@ -30,26 +35,6 @@ class UserProfile(AbstractBaseUser):
     username = models.CharField(max_length=50)
     profile_picture = models.ImageField()
     phone_number = PhoneNumberField()
-
-
-class CustomerProfile(AbstractBaseUser):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    customer_sector = models.CharField(max_length=50)
-
-
-class LandownerProfile(AbstractBaseUser):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.CharField(max_length=128)
-    company_name = models.CharField(max_length=50)
-    tin_number = models.CharField(max_length=9)
-    is_verified = models.BooleanField(default=False)
-
-
-class EmployeeProfile(AbstractBaseUser):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    landowners_id = models.ForeignKey(
-        LandownerProfile, on_delete=models.CASCADE)
-    task_metrics = models.IntegerField()
 
 
 class TokenGenerator():
