@@ -22,10 +22,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    # @property
-    # def is_staff(self):
-    #     return self.is_staff
-
     def __str__(self):
         return self.email
 
@@ -44,11 +40,3 @@ class TokenGenerator():
 
 
 user_reset_password_token = TokenGenerator()
-
-
-'''
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField()
-    image = models.ImageField(null=True, blank=True)
-'''
