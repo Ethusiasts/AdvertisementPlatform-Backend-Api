@@ -29,7 +29,7 @@ class SignUpAPI(APIView):
                         request.data['email'], request.data['password'], **kwargs)
                     token = user_reset_password_token._create_token(user)
                     verification_link = request.build_absolute_uri(
-                        reverse('activate-account', kwargs={'token': token}))
+                        reverse('activate', kwargs={'token': token}))
                     send_email('Activate your user account',
                                'Please click the following link to activate your account', request.data['email'], verification_link)
 
@@ -77,6 +77,23 @@ class LoginAPI(APIView):
             return error_400('bad request')
 
 
+class ActivateAccountView(APIView):
+    def get(self, request, token):
+        try:
+            token_obj = Token.objects.get(key=token)
+            user = User.objects.get(pk=token_obj.user_id)
+            if user is not None and token:
+                user.is_verified = True
+                user.save()
+                return success_200('Account successfully activated.', '')
+
+            return error_400('user not found')
+
+        except Exception as e:
+            print(e)
+            return error_400('bad request')
+
+
 class ForgotPasswordAPI(APIView):
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
@@ -86,6 +103,7 @@ class ForgotPasswordAPI(APIView):
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
                 return Response({'message': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
             token = user_reset_password_token._create_token(user)
             reset_password_link = request.build_absolute_uri(
                 reverse('reset-password', kwargs={'token': token}))
@@ -93,23 +111,8 @@ class ForgotPasswordAPI(APIView):
             send_email('Reset Your Password',
                        'Please click the following link to reset your password', email, reset_password_link)
             return success_200(
-                'A link to reset your password has been sent to your email.'
+                'A link to reset your password has been sent to your email.', ''
             )
-        return error_400('bad request')
-
-
-def ActivateAccount(request, token):
-    try:
-        token_obj = Token.objects.get(key=token)
-        user = User.objects.get(pk=token_obj.user_id)
-        if user is not None and token:
-            user.is_verified = True
-            user.save()
-            return success_200('Account successfully activated.')
-
-        return error_400('user not found')
-
-    except Exception as e:
         return error_400('bad request')
 
 

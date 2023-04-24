@@ -32,7 +32,7 @@ SERVER_EMAIL = 'se.biruk.ayalew@gmail.com'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_PASSWORD = 'yjdlehbsjmwityjr'
+EMAIL_HOST_PASSWORD = 'vuomdjnxjbgsypzt'
 
 EMAIL_USE_TLS = True
 # SECURITY WARNING: don't run with debug turned on in production!
