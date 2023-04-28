@@ -7,7 +7,6 @@ from user.models import User
 
 class MediaAgency(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
-    address = models.CharField(max_length=128)
     company_name = models.CharField(max_length=50)
     tin_number = models.CharField(max_length=9)
     is_verified = models.BooleanField(default=False)

@@ -22,7 +22,7 @@ urlpatterns = [
     path('api/v1/', include('user.urls')),
     path('api/v1/advertisement/', include('advertisement.urls')),
     path('api/v1/billboards/', include('billboard.urls')),
-    path('api/v1/landowners/', include('landowner.urls')),
+    path('api/v1/media_agencies/', include('media_agency.urls')),
     path('swagger/', schema_view.with_ui(
         'swagger'), name='schema-swagger-ui')
 
