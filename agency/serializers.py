@@ -6,4 +6,4 @@ from agency.models import Agency
 class AgencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Agency
-        fields = '_all_'
+        fields = '__all__'
