@@ -17,15 +17,15 @@ class BaseTest(TestCase):
         self.user = {
             "email": "test@gmail.com",
             "password": "12345678",
-            "first_name": "sador",
-            "last_name": "Ayalew",
+            "first_name": "test",
+            "last_name": "test",
             "role": "customer",
         }
         self.user_invalid_role = {
             "email": "test@gmail.com",
             "password": "12345678",
-            "first_name": "sador",
-            "last_name": "Ayalew",
+            "first_name": "test",
+            "last_name": "test",
             "role": "Manager"
         }
         self.user_credential_with_invalid_email = {

@@ -1,5 +1,5 @@
 from django.db import models
-from landowner.models import Landowner
+from media_agency.models import MediaAgency
 
 from user.models import User
 from django.contrib.auth.models import AbstractBaseUser
@@ -8,6 +8,6 @@ from django.contrib.auth.models import AbstractBaseUser
 
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    landowners_id = models.ForeignKey(
-        Landowner, on_delete=models.CASCADE)
+    media_agency_id = models.ForeignKey(
+        MediaAgency, on_delete=models.CASCADE)
     task_metrics = models.IntegerField()

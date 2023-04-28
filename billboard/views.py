@@ -21,6 +21,7 @@ class Billboards(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return success_201('successfully created', serializer.data)
+        print(serializer.errors)
         return error_400(serializer.errors)
 
 
