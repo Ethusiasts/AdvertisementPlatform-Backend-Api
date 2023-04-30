@@ -58,3 +58,8 @@ class BillboardDetail(generics.GenericAPIView):
             return error_404(f'Billboard with id: {id} not found.')
         billboard.delete()
         return success_204()
+
+
+class SearchBillboards(generics.GenericAPIView):
+    def get(self, request):
+        return
