@@ -1,19 +1,22 @@
 from django.db import models
-
-from landowner.models import Landowner
+from django.core.validators import MaxValueValidator, MinValueValidator
+from media_agency.models import MediaAgency
 
 
 # Create your models here.
 
 
 class Billboard(models.Model):
-    rate = models.DecimalField(
-        decimal_places=2, default=0.0, max_digits=15)
+    rate = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
     location = models.CharField(max_length=128)
     image = models.ImageField()
     width = models.IntegerField()
     height = models.IntegerField()
-    landowner_id = models.ForeignKey(
-        Landowner, on_delete=models.CASCADE)
+    media_agency_id = models.OneToOneField(
+        MediaAgency, on_delete=models.CASCADE, default=None)
     approved = models.BooleanField(default=False)
     production = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.location

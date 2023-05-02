@@ -11,17 +11,17 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('media_agency', '__first__'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Employee',
+            name='MediaAgency',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('task_metrics', models.IntegerField()),
-                ('media_agency_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='media_agency.mediaagency')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('company_name', models.CharField(max_length=50)),
+                ('tin_number', models.CharField(max_length=9)),
+                ('is_verified', models.BooleanField(default=False)),
+                ('user', models.OneToOneField(default=None, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

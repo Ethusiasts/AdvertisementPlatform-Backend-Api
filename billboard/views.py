@@ -21,6 +21,7 @@ class Billboards(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return success_201('successfully created', serializer.data)
+        print(serializer.errors)
         return error_400(serializer.errors)
 
 
@@ -57,3 +58,8 @@ class BillboardDetail(generics.GenericAPIView):
             return error_404(f'Billboard with id: {id} not found.')
         billboard.delete()
         return success_204()
+
+
+class SearchBillboards(generics.GenericAPIView):
+    def get(self, request):
+        return
