@@ -13,7 +13,7 @@ class Billboard(models.Model):
     image = models.ImageField()
     width = models.IntegerField()
     height = models.IntegerField()
-    media_agency_id = models.OneToOneField(
+    media_agency_id = models.ForeignKey(
         MediaAgency, on_delete=models.CASCADE, default=None)
     approved = models.BooleanField(default=False)
     production = models.BooleanField(default=False)

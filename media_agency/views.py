@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics
-from advertisement_platform.errors import error_400, error_404, success_200, success_201
+from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
 from media_agency.models import MediaAgency
 
 from media_agency.serializers import MediaAgencySerializer
@@ -47,3 +47,10 @@ class MediaAgencyDetail(generics.GenericAPIView):
             serializer.save()
             return success_200('sucess', media_agency)
         return error_400(serializer.errors)
+
+    def delete(self, request, id):
+        media_agency = self.get_media_agency(id)
+        if media_agency == None:
+            return error_404(f'MediaAgency with id: {id} not found.')
+        media_agency.delete()
+        return success_204()
