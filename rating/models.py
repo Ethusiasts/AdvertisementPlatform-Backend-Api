@@ -9,9 +9,9 @@ from user.models import User
 
 class Rating(models.Model):
     user_id = models.ForeignKey(
-        User, on_delete=models.CASCADE, defaul=None)
+        User, on_delete=models.CASCADE, default=None)
     agency_id = models.ForeignKey(
-        Agency, on_delete=models.CASCADE, defaul=None)
+        Agency, on_delete=models.CASCADE, default=None)
     billboard_id = models.ForeignKey(
         Billboard, on_delete=models.CASCADE, default=None)
     rating = models.PositiveIntegerField(

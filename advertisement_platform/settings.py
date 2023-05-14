@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'billboard',
     'proposal',
     'employee',
+    'rating',
+    'agency',
     'media_agency',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -111,7 +113,10 @@ DATABASES = {
         'NAME': 'advertisement_platform',
         'USER': 'postgres',
         'PASSWORD': '12345678',
-        'HOST': 'localhost'
+        'HOST': 'localhost',
+        'TEST': {
+            'NAME': 'test_database',
+        },
     }
 }
 
