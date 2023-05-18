@@ -13,9 +13,9 @@ class Contract(models.Model):
         Agency, on_delete=models.CASCADE, default=None)
     customer_signature = models.ImageField()
     agency_signature = models.ImageField()
-    total_tax = models.DecimalField()
-    gross_total_tax = models.DecimalField()
-    net_free = models.DecimalField()
+    total_tax = models.DecimalField(max_digits=10, decimal_places=2)
+    gross_total_tax = models.DecimalField(max_digits=10, decimal_places=2)
+    net_free = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.proposal_id
