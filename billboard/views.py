@@ -14,14 +14,14 @@ class Billboards(generics.GenericAPIView):
 
     def get(self, request):
         billboards = Billboard.objects.all()
-        return success_200('sucess', billboards)
+        serializer = self.serializer_class(billboards, many=True)
+        return success_200('sucess', serializer.data)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return success_201('successfully created', serializer.data)
-        print(serializer.errors)
         return error_400(serializer.errors)
 
 
@@ -38,18 +38,18 @@ class BillboardDetail(generics.GenericAPIView):
     def get(self, request, id):
         billboard = self.get_billboard(id)
         if billboard:
-            return success_200('sucess', billboard)
+            serializer = self.serializer_class(billboard)
+            return success_200('', serializer.data)
         return error_404(f'Billboard with id: {id} not found.')
 
     def put(self, request, id):
         billboard = self.get_billboard(id)
         if billboard == None:
-            return error_404(f'Billboard with id: {id} not found.')
-
-        serializer = self.serializer_class(data=request.data)
+            return error_404(f'billboard with id: {id} not found.')
+        serializer = self.serializer_class(billboard, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return success_200('sucess', billboard)
+            return success_200('sucess', serializer.data)
         return error_400(serializer.errors)
 
     def delete(self, request, id):
