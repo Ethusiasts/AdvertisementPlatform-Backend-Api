@@ -24,6 +24,12 @@ urlpatterns = [
     path('api/v1/billboards/', include('billboard.urls')),
     path('api/v1/media_agencies/', include('media_agency.urls')),
     path('api/v1/proposals/', include('proposal.urls')),
+    path('api/v1/contracts/', include('contract.urls')),
+    path('api/v1/ratings/', include('rating.urls')),
+    path('api/v1/agencies/', include('agency.urls')),
+    path('api/v1/employees/', include('employee.urls')),
+
+
 
     path('swagger/', schema_view.with_ui(
         'swagger'), name='schema-swagger-ui')
