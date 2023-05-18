@@ -70,7 +70,7 @@ class LoginAPI(APIView):
                                algorithm='HS256')
 
             return success_login_200(
-                'You are successfully loged in.', token
+                'You are successfully logged in.', token
             )
 
         except Exception as e:
