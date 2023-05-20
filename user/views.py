@@ -47,7 +47,7 @@ class SignUpAPI(generics.GenericAPIView):
 
         except Exception as e:
             print(e)
-            return error_500('something went wrong')
+            return error_500(e)
 
 
 class LoginAPI(generics.GenericAPIView):
