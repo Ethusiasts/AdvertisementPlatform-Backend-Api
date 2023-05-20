@@ -85,6 +85,10 @@ ROOT_URLCONF = 'advertisement_platform.urls'
 
 AUTH_USER_MODEL = 'user.User'
 
+STATIC_URL = '/static/'
+
+STATIC_ROOT = BASE_DIR / 'staic'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
