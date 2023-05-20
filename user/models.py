@@ -3,9 +3,9 @@ from django.db import models
 from user.manage import CustomUserManager
 from rest_framework.authtoken.models import Token
 from phonenumber_field.modelfields import PhoneNumberField
+
+
 # User model.
-
-
 class User(AbstractBaseUser, PermissionsMixin):
 
     username = None
@@ -14,8 +14,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     role = models.CharField(max_length=50, blank=True)
-    is_verified = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
+    is_verified = models.BooleanField(
+        default=False)  # verify user through email
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -26,11 +26,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
-class UserProfile(AbstractBaseUser):
+# User profile mode.
+class UserProfile(models.Model):
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=50)
     profile_picture = models.ImageField()
     phone_number = PhoneNumberField()
+
+    def __str__(self):
+        return self.user.email
 
 
 class TokenGenerator():

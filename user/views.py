@@ -5,21 +5,25 @@ import jwt
 from django.urls import reverse
 from rest_framework.views import APIView
 from advertisement_platform.settings import SECRET_KEY
-from advertisement_platform.errors import error_400, error_500, success_200, success_login_200
+from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_login_200
 from user.forms import ResetPasswordForm
 from advertisement_platform.helpers import send_email, valid_role
-from user.models import User, user_reset_password_token
-from user.serializers import ForgotPasswordSerializer, LoginSerializer, UserSerializer
+from user.models import User, UserProfile, user_reset_password_token
+from user.serializers import ForgotPasswordSerializer, LoginSerializer, UserProfileSerializer, UserSerializer
 from rest_framework import status
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
+from rest_framework.parsers import MultiPartParser
 
 
-class SignUpAPI(APIView):
+class SignUpAPI(generics.GenericAPIView):
+    serializer_class = UserSerializer
+
     def post(self, request):
         try:
-            serializer = UserSerializer(data=request.data)
+            serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 role = request.data['role']
                 if valid_role(role):
@@ -46,10 +50,12 @@ class SignUpAPI(APIView):
             return error_500('something went wrong')
 
 
-class LoginAPI(APIView):
+class LoginAPI(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
     def post(self, request):
         try:
-            serializer = LoginSerializer(data=request.data)
+            serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 email = request.data['email']
                 password = request.data['password']
@@ -94,9 +100,11 @@ class ActivateAccountView(APIView):
             return error_400('bad request')
 
 
-class ForgotPasswordAPI(APIView):
+class ForgotPasswordAPI(generics.GenericAPIView):
+    serializer_class = ForgotPasswordSerializer
+
     def post(self, request):
-        serializer = ForgotPasswordSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
             try:
@@ -138,9 +146,41 @@ def ResetPassword(request, token):
     return render(request, "app/reset_password.html")
 
 
+class UserProfileAPI(generics.GenericAPIView):
+    serializer_class = UserProfileSerializer
+    parser_classes = (MultiPartParser,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return success_201('successfully created', serializer.data)
+        return error_400(serializer.errors)
+
+
+class UserProfileDetailAPI(generics.GenericAPIView):
+    serializer_class = UserProfileSerializer
+    parser_classes = (MultiPartParser,)
+
+    def get(self, request, id):
+        user_profile = UserProfile.objects.get(id=id)
+        if user_profile:
+            serializer = self.serializer_class(user_profile)
+            return success_200('sucess', serializer.data)
+        return error_404(f'Userprofile with id: {id} not found.')
+
+    def put(self, request, id):
+        user_profile = UserProfile.objects.get(id=id)
+        if user_profile == None:
+            return error_404(f'User profile with id: {id} not found.')
+        serializer = self.serializer_class(user_profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return success_200('sucess', serializer.data)
+        return error_400(serializer.errors)
+
+
 # Code below is for test only.
-
-
 class UserAPI(APIView):
     def get(self, request):
         token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
