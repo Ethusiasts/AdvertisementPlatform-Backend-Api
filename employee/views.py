@@ -25,6 +25,8 @@ class Employees(generics.GenericAPIView):
 
 
 class EmployeeDetail(generics.GenericAPIView):
+    serializer_class = EmployeeSerializer
+
     def get_employee(self, id):
         try:
             return Employee.objects.get(id=id)
