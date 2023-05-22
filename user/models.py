@@ -11,8 +11,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = None
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
     role = models.CharField(max_length=50, blank=True)
     is_verified = models.BooleanField(
         default=False)  # verify user through email
@@ -30,6 +28,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserProfile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50, default=None)
+    last_name = models.CharField(max_length=50, default=None)
     username = models.CharField(max_length=50)
     profile_picture = models.ImageField()
     phone_number = PhoneNumberField()

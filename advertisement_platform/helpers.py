@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 
 
-roles = ["ADMIN", "CUSTOMER", "EMPLOYEE", "LANDOWNER"]
+roles = ["ADMIN", "CUSTOMER", "EMPLOYEE", "LANDOWNER", "TV", "RADIO"]
 
 
 def valid_role(role):
