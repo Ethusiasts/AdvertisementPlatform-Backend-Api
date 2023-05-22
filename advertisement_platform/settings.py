@@ -180,3 +180,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+config = {
+    "apiKey": "AIzaSyBsdRuSij4KgsjWiYd3IIozTXVOaClF1wg",
+    "authDomain": "advertisement-platform-6148e.firebaseapp.com",
+    "projectId": "advertisement-platform-6148e",
+    "storageBucket": "advertisement-platform-6148e.appspot.com",
+    "messagingSenderId": "405863567052",
+    "appId": "1:405863567052:web:93d4a3a00dfe7d2da77c69",
+    "measurementId": "G-KM111N9DVS",
+    "serviceAccount": "./advertisement_platform/service_account.json",
+    "databaseURL": "https://advertisement-platform-6148e-default-rtdb.firebaseio.com/"
+}
