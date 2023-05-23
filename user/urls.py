@@ -17,5 +17,6 @@ urlpatterns = [
 
     # Only for test
     path('user/<int:id>', DeleteUser.as_view()),
+    path('user', GetUser.as_view()),
 
 ]

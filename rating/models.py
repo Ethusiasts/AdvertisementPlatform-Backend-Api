@@ -16,4 +16,4 @@ class Rating(models.Model):
         Billboard, on_delete=models.CASCADE, default=None)
     rating = models.PositiveIntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
-    comment = models.CharField(max_length=500, default=None)
+    comment = models.CharField(max_length=128, default=None)

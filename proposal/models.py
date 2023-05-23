@@ -2,6 +2,7 @@ from django.db import models
 from advertisement.models import Advertisement
 from billboard.models import Billboard
 from user.models import User
+from billboard.models import Billboard
 
 # Create your models here.
 

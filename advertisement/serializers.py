@@ -8,13 +8,4 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Advertisement
-        fields = [
-            'id',
-            'advertisement_type',
-            'billBoard_id_or_agency_name',
-            'duration_in_hour',
-            'width',
-            'height',
-            'quantity',
-            'advertisement_file'
-        ]
+        fields = '__all__'

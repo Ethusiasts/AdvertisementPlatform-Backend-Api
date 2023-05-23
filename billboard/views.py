@@ -3,8 +3,6 @@ from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
 from billboard.models import Billboard
 from rest_framework.parsers import MultiPartParser, FormParser
-import pyrebase
-from advertisement_platform.settings import config
 from billboard.serializers import BillboardSerializer
 # Create your views here.
 
@@ -28,13 +26,6 @@ class Billboards(generics.GenericAPIView):
         return success_200('sucess', serializer.data)
 
     def post(self, request):
-        image = request.data['image']
-        firebase = pyrebase.initialize_app(config)
-        storage = firebase.storage()
-        uploaded_image = storage.put(image)
-        image_name = uploaded_image['name']
-        image_url = storage.child(image_name).get_url(None)
-        request.data['image'] = image_url
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
