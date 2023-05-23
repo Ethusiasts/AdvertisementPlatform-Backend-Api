@@ -33,6 +33,8 @@ class UserProfile(models.Model):
     username = models.CharField(max_length=50)
     profile_picture = models.ImageField()
     phone_number = PhoneNumberField()
+    first_name = models.CharField(max_length=50, default=None)
+    last_name = models.CharField(max_length=50, default=None)
 
     def __str__(self):
         return self.user.email

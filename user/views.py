@@ -27,8 +27,7 @@ class SignUpAPI(generics.GenericAPIView):
             if serializer.is_valid():
                 role = request.data['role']
                 if valid_role(role):
-                    kwargs = {'first_name': request.data['first_name'],
-                              'last_name': request.data['last_name'], 'role': role}
+                    kwargs = {'role': role}
                     user = User.objects.create_user(
                         request.data['email'], request.data['password'], **kwargs)
                     token = user_reset_password_token._create_token(user)
@@ -207,3 +206,13 @@ class DeleteUser(APIView):
             except Exception as e:
                 print(e)
                 return Response({'message': 'something went wrong'})
+
+
+class GetUser(APIView):
+    def get(self, request):
+        if request.method == 'GET':
+            users = User.objects.all()
+            print(users)
+            serializer = UserSerializer(users, many=True)
+            return success_200('sucess', serializer.data)
+        return Response({'message': 'something went wrong'})

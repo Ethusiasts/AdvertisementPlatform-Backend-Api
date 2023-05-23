@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q
+from user.models import User
 
 from user.models import User
 
@@ -24,4 +24,4 @@ class Advertisement(models.Model):
     advertisement_file = models.FileField(blank=True, null=True)
     approved = models.BooleanField(default=False)
     customer = models.ForeignKey(
-        User, default=None, on_delete=models.CASCADE, )
+        User, on_delete=models.CASCADE, default=None)

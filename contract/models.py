@@ -1,5 +1,4 @@
 from django.db import models
-from agency.models import Agency
 from media_agency.models import MediaAgency
 
 from proposal.models import Proposal
