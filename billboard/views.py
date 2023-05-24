@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
 from billboard.models import Billboard
+from django.db.models import Q
 from rest_framework.parsers import MultiPartParser, FormParser
 from billboard.serializers import BillboardSerializer
 # Create your views here.
@@ -76,5 +77,16 @@ class BillboardDetail(generics.GenericAPIView):
 
 
 class SearchBillboards(generics.GenericAPIView):
+    serializer_class = BillboardSerializer
+
     def get(self, request):
-        return
+        try:
+            query = request.GET.get('q')
+            if query:
+                results = Billboard.objects.filter(Q(location__icontains=query) | Q(width__icontains=query) | Q(
+                    height__icontains=query) | Q(rate__icontains=query)).values('location', 'width', 'height', 'rate', )
+                return success_200('sucess', results)
+            return success_200('No results found', [])
+        except Exception as e:
+            print(e)
+            return error_404('Page not found.')
