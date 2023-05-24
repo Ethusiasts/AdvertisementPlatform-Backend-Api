@@ -21,16 +21,23 @@ class Billboards(generics.GenericAPIView):
     parser_classes = (MultiPartParser,)
 
     def get(self, request):
-        billboards = Billboard.objects.all()
-        serializer = self.serializer_class(billboards, many=True)
-        return success_200('sucess', serializer.data)
+        try:
+            billboards = Billboard.objects.all()
+            serializer = self.serializer_class(billboards, many=True)
+            return success_200('sucess', serializer.data)
+        except Exception as e:
+            print(e)
+            return error_400(serializer.errors)
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return success_201('successfully created', serializer.data)
-        return error_400(serializer.errors)
+        try:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return success_201('successfully created', serializer.data)
+        except Exception as e:
+            print(e)
+            return error_400(e)
 
 
 class BillboardDetail(generics.GenericAPIView):

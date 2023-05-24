@@ -24,7 +24,7 @@ class Billboard(models.Model):
     production = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
     status = models.CharField(
-        max_length=1, choices=STATUS_CHOICES, default='F')
+        max_length=1, choices=STATUS_CHOICES, default=None)
 
     def __str__(self):
         return self.location
