@@ -84,7 +84,7 @@ class SearchBillboards(generics.GenericAPIView):
             query = request.GET.get('q')
             if query:
                 results = Billboard.objects.filter(Q(location__icontains=query) | Q(width__icontains=query) | Q(
-                    height__icontains=query) | Q(rate__icontains=query)).values('location', 'width', 'height', 'rate', 'image')
+                    height__icontains=query) | Q(monthly_rate_per_sq__icontains=query)).values('location', 'width', 'height', 'rate', 'image', 'monthly_rate_per_sq', 'production')
                 return success_200('sucess', results)
             return success_200('No results found', [])
         except Exception as e:

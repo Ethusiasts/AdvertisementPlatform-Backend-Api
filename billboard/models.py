@@ -8,12 +8,14 @@ from media_agency.models import MediaAgency
 
 class Billboard(models.Model):
     STATUS_CHOICES = [
-        ('F', 'Free'),
-        ('O', 'Occupied'),
+        ('Free', 'Free'),
+        ('Occupied', 'Occupied'),
     ]
 
     rate = models.PositiveIntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    monthly_rate_per_sq = models.DecimalField(
+        max_digits=8, decimal_places=2, default=0)
     location = models.CharField(max_length=128)
     image = models.URLField()
     width = models.IntegerField()
@@ -24,7 +26,7 @@ class Billboard(models.Model):
     production = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
     status = models.CharField(
-        max_length=1, choices=STATUS_CHOICES, default=None)
+        max_length=8, choices=STATUS_CHOICES, default=None)
 
     def __str__(self):
         return self.location
