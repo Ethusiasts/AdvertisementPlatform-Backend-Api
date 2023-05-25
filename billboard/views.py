@@ -1,8 +1,10 @@
+from decimal import Decimal
 from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
 from billboard.models import Billboard
 from django.db.models import Q
+from django.db.models import F
 from rest_framework.parsers import MultiPartParser, FormParser
 from billboard.serializers import BillboardSerializer
 # Create your views here.
@@ -82,11 +84,44 @@ class SearchBillboards(generics.GenericAPIView):
     def get(self, request):
         try:
             query = request.GET.get('q')
+            location_filter = request.GET.get('location')
+            has_production = request.GET.get('has_production')
+            price_filter = request.GET.get('price')
+            size_filter = request.GET.get('size')
+            billboards = Billboard.objects.all()
             if query:
-                results = Billboard.objects.filter(Q(location__icontains=query) | Q(width__icontains=query) | Q(
-                    height__icontains=query) | Q(monthly_rate_per_sq__icontains=query)).values('location', 'width', 'height', 'rate', 'image', 'monthly_rate_per_sq', 'production')
+                billboards = billboards.filter(Q(location__icontains=query) | Q(width__icontains=query) | Q(
+                    height__icontains=query) | Q(monthly_rate_per_sq__icontains=query))
+
+            if location_filter:
+                billboards = billboards.filter(
+                    location__icontains=location_filter)
+            if has_production:
+                has_production = has_production.lower() == 'true'
+                billboards = billboards.filter(production=has_production)
+            if price_filter:
+                price_filter = Decimal(price_filter)
+                billboards = billboards.filter(
+                    monthly_rate_per_sq=price_filter)
+            if size_filter:
+                size_filter = int(size_filter)
+                billboards = billboards.annotate(
+                    area=F('width') * F('height')).filter(area=size_filter)
+
+            results = billboards.values(
+                'location',
+                'width',
+                'height',
+                'rate',
+                'image',
+                'monthly_rate_per_sq',
+                'production'
+            )
+
+            if results:
                 return success_200('sucess', results)
-            return success_200('No results found', [])
+            else:
+                return success_200('No results found', [])
         except Exception as e:
             print(e)
             return error_404('Page not found.')
