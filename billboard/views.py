@@ -101,11 +101,11 @@ class SearchBillboards(generics.GenericAPIView):
                 has_production = has_production.lower() == 'true'
                 billboards = billboards.filter(production=has_production)
             if min_price:
-                price_filter = Decimal(price_filter)
+                min_price = Decimal(min_price)
                 billboards = billboards.filter(
                     monthly_rate_per_sq__gte=min_price)
             if max_price:
-                price_filter = Decimal(price_filter)
+                max_price = Decimal(max_price)
                 billboards = billboards.filter(
                     monthly_rate_per_sq__lte=max_price)
             if size_filter:
