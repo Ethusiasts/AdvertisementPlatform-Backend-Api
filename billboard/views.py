@@ -86,7 +86,8 @@ class SearchBillboards(generics.GenericAPIView):
             query = request.GET.get('q')
             location_filter = request.GET.get('location')
             has_production = request.GET.get('has_production')
-            price_filter = request.GET.get('price')
+            min_price = request.GET.get('min_price')
+            max_price = request.GET.get('max_price')
             size_filter = request.GET.get('size')
             billboards = Billboard.objects.all()
             if query:
@@ -99,14 +100,18 @@ class SearchBillboards(generics.GenericAPIView):
             if has_production:
                 has_production = has_production.lower() == 'true'
                 billboards = billboards.filter(production=has_production)
-            if price_filter:
+            if min_price:
                 price_filter = Decimal(price_filter)
                 billboards = billboards.filter(
-                    monthly_rate_per_sq=price_filter)
+                    monthly_rate_per_sq__gte=min_price)
+            if max_price:
+                price_filter = Decimal(price_filter)
+                billboards = billboards.filter(
+                    monthly_rate_per_sq__lte=max_price)
             if size_filter:
                 size_filter = int(size_filter)
                 billboards = billboards.annotate(
-                    area=F('width') * F('height')).filter(area=size_filter)
+                    area=F('width') * F('height')).filter(area__lte=size_filter)
 
             results = billboards.values(
                 'location',
