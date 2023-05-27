@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.db.models import F
 from rest_framework.parsers import MultiPartParser, FormParser
 from billboard.serializers import BillboardSerializer
+from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 
 
@@ -123,10 +124,21 @@ class SearchBillboards(generics.GenericAPIView):
                 'production'
             )
 
-            if results:
-                return success_200('sucess', results)
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(results, request)
+
+            serialized_results = self.serializer_class(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
             else:
                 return success_200('No results found', [])
+            # if results:
+                # return success_200('sucess', results)
+            # else:
+                # return success_200('No results found', [])
         except Exception as e:
             print(e)
             return error_404('Page not found.')
