@@ -27,11 +27,22 @@ class Billboards(generics.GenericAPIView):
     def get(self, request):
         try:
             billboards = Billboard.objects.all()
-            serializer = self.serializer_class(billboards, many=True)
-            return success_200('sucess', serializer.data)
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(
+                billboards, request)
+
+            serialized_results = self.serializer_class(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No billboards found', [])
         except Exception as e:
             print(e)
-            return error_400(serializer.errors)
+            return error_400(serialized_results.errors)
 
     def post(self, request):
         try:
@@ -135,10 +146,6 @@ class SearchBillboards(generics.GenericAPIView):
                 return paginator.get_paginated_response(serialized_results)
             else:
                 return success_200('No results found', [])
-            # if results:
-                # return success_200('sucess', results)
-            # else:
-                # return success_200('No results found', [])
         except Exception as e:
             print(e)
             return error_404('Page not found.')
