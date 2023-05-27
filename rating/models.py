@@ -8,12 +8,17 @@ from user.models import User
 
 
 class Rating(models.Model):
-    user_id = models.ForeignKey(
-        User, on_delete=models.CASCADE, default=None)
+    ENTITY_CHOICES = [
+        ('Billboard', 'Billboard'),
+        ('Agency', 'Agency')
+    ]
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     agency_id = models.ForeignKey(
-        Agency, on_delete=models.CASCADE, default=None)
+        Agency, on_delete=models.CASCADE, default=None, null=True, blank=True)
     billboard_id = models.ForeignKey(
-        Billboard, on_delete=models.CASCADE, default=None)
+        Billboard, on_delete=models.CASCADE, default=None, null=True, blank=True)
     rating = models.PositiveIntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
     comment = models.CharField(max_length=128, default=None)
+    entity_type = models.CharField(
+        max_length=9, choices=ENTITY_CHOICES, default='Billboard')
