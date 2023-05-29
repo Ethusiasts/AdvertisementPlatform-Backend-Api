@@ -4,6 +4,7 @@ from django.shortcuts import render
 import jwt
 from django.urls import reverse
 from rest_framework.views import APIView
+from advertisement_platform import settings
 from advertisement_platform.settings import SECRET_KEY
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_login_200
 from user.forms import ResetPasswordForm
@@ -31,8 +32,8 @@ class SignUpAPI(generics.GenericAPIView):
                     user = User.objects.create_user(
                         request.data['email'], request.data['password'], **kwargs)
                     token = user_reset_password_token._create_token(user)
-                    verification_link = request.build_absolute_uri(
-                        reverse('activate', kwargs={'token': token}))
+                    verification_link = settings.BASE_URL + \
+                        reverse('activate', kwargs={'token': token})
                     send_email('Activate your user account',
                                'Please click the following link to activate your account', request.data['email'], verification_link)
 
@@ -210,9 +211,14 @@ class DeleteUser(APIView):
 
 class GetUser(APIView):
     def get(self, request):
-        if request.method == 'GET':
-            users = User.objects.all()
-            print(users)
-            serializer = UserSerializer(users, many=True)
-            return success_200('sucess', serializer.data)
-        return Response({'message': 'something went wrong'})
+        try:
+            if request.method == 'GET':
+                users = User.objects.all()
+                print(users)
+                serializer = UserSerializer(users, many=True)
+                return success_200('sucess', serializer.data)
+            return Response({'message': 'something went wrong'})
+
+        except Exception as e:
+            print(e)
+            return Response({'message': 'something went wrong'})
