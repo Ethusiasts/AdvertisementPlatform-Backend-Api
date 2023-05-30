@@ -80,15 +80,34 @@ class AgencyDetail(generics.GenericAPIView):
 class SearchAgencies(generics.GenericAPIView):
     serializer_class = AgencySerializer
 
+    def generate_annotation_and_filter(self, conditions, min_price, max_price):
+        annotation = None
+        filter_condition = None
+
+        for key, value in conditions.items():
+            if value == 'true':
+                if annotation is None:
+                    annotation = Sum(key)
+                else:
+                    annotation += Sum(key)
+
+        if min_price and max_price:
+            filter_condition = Q(
+                total_sum__range=(min_price, max_price))
+
+        return annotation, filter_condition
+
     def get(self, request):
         try:
             query = request.GET.get('q')
-            production = request.GET.get('production')
-            peak_hour = request.GET.get('peak_hour')
-            normal = request.GET.get('normal')
             min_price = request.GET.get('min_price')
             max_price = request.GET.get('max_price')
             channel_name = request.GET.get('channel_name')
+            conditions = {
+                'production': request.GET.get('production'),
+                'peak_hour': request.GET.get('peak_hour'),
+                'normal': 'true',
+            }
 
             agencies = Agency.objects.all()
 
@@ -100,20 +119,11 @@ class SearchAgencies(generics.GenericAPIView):
                 agencies = agencies.filter(
                     channel_name__icontains=channel_name)
 
-            # When(production=production ==
-            #      'true', then=print('yesss'))
-
-            print(min_price, max_price)
-
-            if (production == 'true' and peak_hour == 'true' and normal == 'true'):
-                print('in')
-
+             # Generate dynamic annotation and filter based on conditions
+            annotation, filter_condition = self.generate_annotation_and_filter(
+                conditions, min_price, max_price)
             filtered_agencies = agencies.annotate(
-                total_sum=Sum(
-                    F('production'), F('peak_hour'), F('normal')
-
-                )
-            ).filter(total_sum__range=(min_price, max_price))
+                total_sum=annotation).filter(filter_condition)
 
             results = filtered_agencies.values(
                 'id',
