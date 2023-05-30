@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
 from agency.models import Agency
-from django.db.models import Q
+from django.db.models import Q, Sum, F, Case, When, Value, DecimalField
 from django.db.models import F
 from agency.serializers import AgencySerializer
 from rest_framework.pagination import PageNumberPagination
@@ -77,62 +77,63 @@ class AgencyDetail(generics.GenericAPIView):
         return success_204()
 
 
-# class SearchAgencies(generics.GenericAPIView):
-#     serializer_class = AgencySerializer
+class SearchAgencies(generics.GenericAPIView):
+    serializer_class = AgencySerializer
 
-#     def get(self, request):
-#         try:
-#             query = request.GET.get('q')
-#             location_filter = request.GET.get('location')
-#             has_production = request.GET.get('has_production')
-#             min_price = request.GET.get('min_price')
-#             max_price = request.GET.get('max_price')
-#             size_filter = request.GET.get('size')
-#             agencies = Agency.objects.all()
-#             if query:
-#                 agencies = agencies.filter(Q(location__icontains=query) | Q(width__icontains=query) | Q(
-#                     height__icontains=query) | Q(monthly_rate_per_sq__icontains=query))
+    def get(self, request):
+        try:
+            query = request.GET.get('q')
+            production = request.GET.get('production')
+            peak_hour = request.GET.get('peak_hour')
+            normal = request.GET.get('normal')
+            min_price = request.GET.get('min_price')
+            max_price = request.GET.get('max_price')
+            channel_name = request.GET.get('channel_name')
 
-#             if location_filter:
-#                 agencies = agencies.filter(
-#                     location__icontains=location_filter)
-#             if has_production:
-#                 has_production = has_production.lower() == 'true'
-#                 agencies = agencies.filter(production=has_production)
-#             if min_price:
-#                 min_price = Decimal(min_price)
-#                 agencies = agencies.filter(
-#                     monthly_rate_per_sq__gte=min_price)
-#             if max_price:
-#                 max_price = Decimal(max_price)
-#                 agencies = agencies.filter(
-#                     monthly_rate_per_sq__lte=max_price)
-#             if size_filter:
-#                 size_filter = int(size_filter)
-#                 agencies = agencies.annotate(
-#                     area=F('width') * F('height')).filter(area__lte=size_filter)
+            agencies = Agency.objects.all()
 
-#             results = agencies.values(
-#                 'location',
-#                 'width',
-#                 'height',
-#                 'rate',
-#                 'image',
-#                 'monthly_rate_per_sq',
-#                 'production'
-#             )
+            if query:
+                agencies = agencies.filter(Q(channel_name__icontains=query) | Q(production__icontains=query) | Q(
+                    normal__icontains=query) | Q(peak_hour__icontains=query))
 
-#             paginator = PageNumberPagination()
-#             paginator.page_size = 6
-#             paginated_results = paginator.paginate_queryset(results, request)
+            if channel_name:
+                agencies = agencies.filter(
+                    channel_name__icontains=channel_name)
 
-#             serialized_results = self.serializer_class(
-#                 paginated_results, many=True).data
+            # When(production=production ==
+            #      'true', then=print('yesss'))
 
-#             if serialized_results:
-#                 return paginator.get_paginated_response(serialized_results)
-#             else:
-#                 return success_200('No results found', [])
-#         except Exception as e:
-#             print(e)
-#             return error_404('Page not found.')
+            print(min_price, max_price)
+
+            if (production == 'true' and peak_hour == 'true' and normal == 'true'):
+                print('in')
+
+            filtered_agencies = agencies.annotate(
+                total_sum=Sum(
+                    F('production'), F('peak_hour'), F('normal')
+
+                )
+            ).filter(total_sum__range=(min_price, max_price))
+
+            results = filtered_agencies.values(
+                'id',
+                'channel_name',
+                'peak_hour',
+                'normal',
+                'production',
+            )
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(results, request)
+
+            serialized_results = self.serializer_class(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+        except Exception as e:
+            print(e)
+            return error_404('Page not found.')

@@ -16,7 +16,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, JSONParser
 
 
 class SignUpAPI(generics.GenericAPIView):
@@ -148,7 +148,7 @@ def ResetPassword(request, token):
 
 class UserProfileAPI(generics.GenericAPIView):
     serializer_class = UserProfileSerializer
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, JSONParser)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -160,7 +160,7 @@ class UserProfileAPI(generics.GenericAPIView):
 
 class UserProfileDetailAPI(generics.GenericAPIView):
     serializer_class = UserProfileSerializer
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, JSONParser)
 
     def get(self, request, id):
         user_profile = UserProfile.objects.get(id=id)
