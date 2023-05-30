@@ -5,7 +5,7 @@ from advertisement_platform.errors import error_400, error_404, success_200, suc
 from billboard.models import Billboard
 from django.db.models import Q
 from django.db.models import F
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from billboard.serializers import BillboardSerializer
 from rest_framework.pagination import PageNumberPagination
 # Create your views here.
@@ -22,7 +22,7 @@ from rest_framework.pagination import PageNumberPagination
 
 class Billboards(generics.GenericAPIView):
     serializer_class = BillboardSerializer
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, JSONParser)
 
     def get(self, request):
         try:

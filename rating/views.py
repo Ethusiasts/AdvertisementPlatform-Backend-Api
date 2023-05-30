@@ -6,7 +6,7 @@ from advertisement_platform.errors import error_400, error_404, success_200, suc
 from rating.models import Rating
 from django.db.models import Q
 from django.db.models import F
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rating.serializers import RatingSerializer
 from django.db.models import Avg
 # Create your views here.
@@ -23,7 +23,7 @@ from django.db.models import Avg
 
 class Ratings(generics.GenericAPIView):
     serializer_class = RatingSerializer
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, JSONParser)
 
     def get(self, request):
         try:
@@ -47,7 +47,7 @@ class Ratings(generics.GenericAPIView):
 
 class RatingDetail(generics.GenericAPIView):
     serializer_class = RatingSerializer
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, JSONParser)
 
     def get_rating(self, id):
         try:
