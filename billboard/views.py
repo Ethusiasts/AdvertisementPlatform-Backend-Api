@@ -104,7 +104,7 @@ class SearchBillboards(generics.GenericAPIView):
             billboards = Billboard.objects.all()
             if query:
                 billboards = billboards.filter(Q(location__icontains=query) | Q(width__icontains=query) | Q(
-                    height__icontains=query) | Q(monthly_rate_per_sq__icontains=query))
+                    height__icontains=query) | Q(monthly_rate_per_sq__icontains=query) | Q(status__icontains=query))
 
             if location_filter:
                 billboards = billboards.filter(
@@ -132,7 +132,8 @@ class SearchBillboards(generics.GenericAPIView):
                 'rate',
                 'image',
                 'monthly_rate_per_sq',
-                'production'
+                'production',
+                'status'
             )
 
             paginator = PageNumberPagination()
