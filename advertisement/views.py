@@ -1,36 +1,76 @@
 from rest_framework import generics, permissions, authentication
+
+from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
 from .models import Advertisement
 from .serializers import AdvertisementSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 
-class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Advertisement.objects.all()
+class Advertisements(generics.GenericAPIView):
     serializer_class = AdvertisementSerializer
 
-    def perform_create(self, serializer):
+    def get(self, request):
+        try:
+            advertisements = Advertisement.objects.all()
 
-        return serializer.save()
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(
+                advertisements, request)
+
+            serialized_results = self.serializer_class(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No advertisements found', [])
+        except Exception as e:
+            print(e)
+            return error_400(serialized_results.errors)
+
+    def post(self, request):
+        try:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return success_201('successfully created', serializer.data)
+        except Exception as e:
+            print(e)
+            return error_400(e)
 
 
-class AdvertisementDetailsAPIView(generics.RetrieveAPIView):
-    queryset = Advertisement.objects.all()
+class AdvertisementDetail(generics.GenericAPIView):
     serializer_class = AdvertisementSerializer
 
+    def get_billboard(self, id):
+        try:
+            return Advertisement.objects.get(id=id)
+        except:
+            return None
 
-class AdvertisementUpdateAPIView(generics.UpdateAPIView):
-    queryset = Advertisement.objects.all()
-    serializer_class = AdvertisementSerializer
+    def get(self, request, id):
+        billboard = self.get_billboard(id)
+        if billboard:
+            serializer = self.serializer_class(billboard)
+            return success_200('', serializer.data)
+        return error_404(f'Advertisement with id: {id} not found.')
 
-    def perform_update(self, serializer):
-        return serializer.save()
+    def put(self, request, id):
+        billboard = self.get_billboard(id)
+        if billboard == None:
+            return error_404(f'billboard with id: {id} not found.')
+        serializer = self.serializer_class(billboard, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return success_200('sucess', serializer.data)
+        return error_400(serializer.errors)
 
-
-class AdvertisementDeleteAPIView(generics.DestroyAPIView):
-    queryset = Advertisement.objects.all()
-    serializer_class = AdvertisementSerializer
-    lookup_field = 'pk'
-
-    def perform_destroy(self, instance):
-        super().perform_destroy(instance)
+    def delete(self, request, id):
+        billboard = self.get_billboard(id)
+        if billboard == None:
+            return error_404(f'Advertisement with id: {id} not found.')
+        billboard.delete()
+        return success_204()

@@ -4,11 +4,15 @@ from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
 from billboard.models import Billboard
 from billboard.serializers import BillboardSerializer
+from contract.models import Contract
+from contract.serializers import ContractSerializer
 from media_agency.models import MediaAgency
 from django.core.serializers import serialize
 from rest_framework.pagination import PageNumberPagination
 import json
 from media_agency.serializers import MediaAgencySerializer
+from proposal.models import Proposal
+from proposal.serializers import ProposalSerializer
 # Create your views here.
 
 
@@ -16,9 +20,24 @@ class MediaAgencies(generics.GenericAPIView):
     serializer_class = MediaAgencySerializer
 
     def get(self, request):
-        media_agencies = MediaAgency.objects.all()
-        serializer = self.serializer_class(media_agencies, many=True)
-        return success_200('sucess', serializer.data)
+        try:
+            media_agencies = MediaAgency.objects.all()
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(
+                media_agencies, request)
+
+            serialized_results = self.serializer_class(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No media agencies found', [])
+        except Exception as e:
+            print(e)
+            return error_400(serialized_results.errors)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -69,6 +88,7 @@ class MediaAgencyBillboards(generics.GenericAPIView):
         try:
             billboards = Billboard.objects.filter(
                 media_agency_id=id)
+            serialized_results = billboards
             if billboards:
                 serializer = self.serializer_class(billboards, many=True)
                 paginator = PageNumberPagination()
@@ -79,10 +99,66 @@ class MediaAgencyBillboards(generics.GenericAPIView):
                 serialized_results = self.serializer_class(
                     paginated_results, many=True).data
 
-                if serialized_results:
-                    return paginator.get_paginated_response(serialized_results)
-                else:
-                    return success_200('No results found', [])
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+
+        except Exception as e:
+            print(e)
+            return error_500('Something went wrong')
+
+
+class MediaAgencyProposals(generics.GenericAPIView):
+    serializer_class = ProposalSerializer
+
+    def get(self, request, id):
+        try:
+            proposals = Proposal.objects.filter(
+                media_agency_id=id)
+            serialized_results = proposals
+            if proposals:
+                # serializer = self.serializer_class(proposals, many=True)
+                paginator = PageNumberPagination()
+                paginator.page_size = 6
+                paginated_results = paginator.paginate_queryset(
+                    proposals, request)
+
+                serialized_results = self.serializer_class(
+                    paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+
+        except Exception as e:
+            print(e)
+            return error_500('Something went wrong')
+
+
+class MediaAgencyContracts(generics.GenericAPIView):
+    serializer_class = ContractSerializer
+
+    def get(self, request, id):
+        try:
+            contracts = Contract.objects.filter(
+                media_agency_id=id)
+            serialized_results = contracts
+            if contracts:
+                serializer = self.serializer_class(contracts, many=True)
+                paginator = PageNumberPagination()
+                paginator.page_size = 6
+                paginated_results = paginator.paginate_queryset(
+                    contracts, request)
+
+                serialized_results = self.serializer_class(
+                    paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
 
         except Exception as e:
             print(e)

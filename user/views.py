@@ -4,9 +4,15 @@ from django.shortcuts import render
 import jwt
 from django.urls import reverse
 from rest_framework.views import APIView
+from advertisement.models import Advertisement
+from advertisement.serializers import AdvertisementSerializer
 from advertisement_platform import settings
 from advertisement_platform.settings import SECRET_KEY
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_login_200
+from contract.models import Contract
+from contract.serializers import ContractSerializer
+from proposal.models import Proposal
+from proposal.serializers import ProposalSerializer
 from user.forms import ResetPasswordForm
 from advertisement_platform.helpers import send_email, valid_role
 from user.models import User, UserProfile, user_reset_password_token
@@ -17,6 +23,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework.parsers import MultiPartParser, JSONParser
+from rest_framework.pagination import PageNumberPagination
 
 
 class SignUpAPI(generics.GenericAPIView):
@@ -222,3 +229,87 @@ class GetUser(APIView):
         except Exception as e:
             print(e)
             return Response({'message': 'something went wrong'})
+
+
+class UserAdvertisements(generics.GenericAPIView):
+    serializer_class = AdvertisementSerializer
+
+    def get(self, request, id):
+        try:
+            advertisements = Advertisement.objects.filter(
+                customer=id)
+            serialized_results = advertisements
+            if advertisements:
+                serializer = self.serializer_class(advertisements, many=True)
+                paginator = PageNumberPagination()
+                paginator.page_size = 6
+                paginated_results = paginator.paginate_queryset(
+                    advertisements, request)
+
+                serialized_results = self.serializer_class(
+                    paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+
+        except Exception as e:
+            print(e)
+            return error_500('Something went wrong')
+
+
+class UserProposals(generics.GenericAPIView):
+    serializer_class = ProposalSerializer
+
+    def get(self, request, id):
+        try:
+            proposals = Proposal.objects.filter(
+                user_id=id)
+            serialized_results = proposals
+            if proposals:
+                # serializer = self.serializer_class(proposals, many=True)
+                paginator = PageNumberPagination()
+                paginator.page_size = 6
+                paginated_results = paginator.paginate_queryset(
+                    proposals, request)
+
+                serialized_results = self.serializer_class(
+                    paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+
+        except Exception as e:
+            print(e)
+            return error_500('Something went wrong')
+
+
+class UserContracts(generics.GenericAPIView):
+    serializer_class = ContractSerializer
+
+    def get(self, request, id):
+        try:
+            contracts = Contract.objects.filter(
+                user_id=id)
+            serialized_results = contracts
+            if contracts:
+                # serializer = self.serializer_class(contracts, many=True)
+                paginator = PageNumberPagination()
+                paginator.page_size = 6
+                paginated_results = paginator.paginate_queryset(
+                    contracts, request)
+
+                serialized_results = self.serializer_class(
+                    paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+
+        except Exception as e:
+            print(e)
+            return error_500('Something went wrong')

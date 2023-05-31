@@ -1,6 +1,7 @@
 from django.db import models
 from advertisement.models import Advertisement
 from billboard.models import Billboard
+from media_agency.models import MediaAgency
 from user.models import User
 from billboard.models import Billboard
 
@@ -12,6 +13,8 @@ class Proposal(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     billBoard_id = models.ForeignKey(
         Billboard, on_delete=models.CASCADE, default=None)
+    media_agency_id = models.ForeignKey(
+        MediaAgency, on_delete=models.CASCADE, default=None)
     advertisement_id = models.ForeignKey(
         Advertisement, on_delete=models.CASCADE)
     description = models.TextField()
