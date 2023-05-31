@@ -11,15 +11,6 @@ from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 
 
-# firebase = pyrebase.initialize_app(config)
-# storage = firebase.storage()
-# first image name to be displayed on the database then image name that you want it to be upload to firebase
-# storage.child(".test1.jpg").put("./media/billboard2.jpg")
-
-# url = storage.child(".test1.jpg").get_url(None)
-# print(url)
-
-
 class Billboards(generics.GenericAPIView):
     serializer_class = BillboardSerializer
     parser_classes = (MultiPartParser, JSONParser)

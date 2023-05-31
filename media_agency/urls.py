@@ -1,9 +1,13 @@
 from django.urls import path
-from media_agency.views import MediaAgencyBillboards, MediaAgencyDetail, MediaAgencies
+from media_agency.views import MediaAgencyBillboards, MediaAgencyContracts, MediaAgencyDetail, MediaAgencies, MediaAgencyProposals
 
 urlpatterns = [
     path('', MediaAgencies.as_view(), name="media-agencies"),
     path('<int:id>/billboards/', MediaAgencyBillboards.as_view(),
          name="media-agency-billboards"),
+    path('<int:id>/contracts/', MediaAgencyContracts.as_view(),
+         name="media-agency-contracts"),
+    path('<int:id>/proposals/', MediaAgencyProposals.as_view(),
+         name="media-agency-proposals"),
     path('<int:id>', MediaAgencyDetail.as_view(), name="media-agency")
 ]
