@@ -1,12 +1,15 @@
 from decimal import Decimal
 from django.shortcuts import render
 from rest_framework import generics
-from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
+from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
 from agency.models import Agency
 from django.db.models import Q, Sum, F, Case, When, Value, DecimalField
 from django.db.models import F
 from agency.serializers import AgencySerializer
 from rest_framework.pagination import PageNumberPagination
+from rating.models import Rating
+
+from rating.serializers import RatingSerializer
 # Create your views here.
 
 
@@ -149,3 +152,30 @@ class SearchAgencies(generics.GenericAPIView):
         except Exception as e:
             print(e)
             return error_404('Page not found.')
+
+
+class AgencyRating(generics.GenericAPIView):
+    serializer_class = RatingSerializer
+
+    def get(self, request, id):
+        try:
+            ratings = Rating.objects.filter(
+                agency_id=id)
+            serialized_results = ratings
+            if ratings:
+                serializer = self.serializer_class(ratings, many=True)
+                paginator = PageNumberPagination()
+                paginator.page_size = 6
+                paginated_results = paginator.paginate_queryset(
+                    ratings, request)
+                serialized_results = self.serializer_class(
+                    paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+
+        except Exception as e:
+            print(e)
+            return error_500('Something went wrong')
