@@ -119,7 +119,7 @@ class SearchAgencies(generics.GenericAPIView):
 
             if channel_name:
                 agencies = agencies.filter(
-                    channel_name__icontains=channel_name)
+                    media_agency_id__user__role=channel_name)
 
             filtered_agencies = agencies
 
