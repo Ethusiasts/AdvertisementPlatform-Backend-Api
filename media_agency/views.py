@@ -1,9 +1,12 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import generics
-from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
+from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
+from billboard.models import Billboard
+from billboard.serializers import BillboardSerializer
 from media_agency.models import MediaAgency
 from django.core.serializers import serialize
+from rest_framework.pagination import PageNumberPagination
 import json
 from media_agency.serializers import MediaAgencySerializer
 # Create your views here.
@@ -57,3 +60,30 @@ class MediaAgencyDetail(generics.GenericAPIView):
             return error_404(f'MediaAgency with id: {id} not found.')
         media_agency.delete()
         return success_204()
+
+
+class MediaAgencyBillboards(generics.GenericAPIView):
+    serializer_class = BillboardSerializer
+
+    def get(self, request, id):
+        try:
+            billboards = Billboard.objects.filter(
+                media_agency_id=id)
+            if billboards:
+                serializer = self.serializer_class(billboards, many=True)
+                paginator = PageNumberPagination()
+                paginator.page_size = 6
+                paginated_results = paginator.paginate_queryset(
+                    billboards, request)
+
+                serialized_results = self.serializer_class(
+                    paginated_results, many=True).data
+
+                if serialized_results:
+                    return paginator.get_paginated_response(serialized_results)
+                else:
+                    return success_200('No results found', [])
+
+        except Exception as e:
+            print(e)
+            return error_500('Something went wrong')

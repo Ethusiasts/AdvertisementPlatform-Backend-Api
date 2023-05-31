@@ -91,9 +91,8 @@ class SearchAgencies(generics.GenericAPIView):
                 else:
                     annotation += Sum(key)
 
-        if min_price and max_price:
-            filter_condition = Q(
-                total_sum__range=(min_price, max_price))
+        filter_condition = Q(
+            total_sum__range=(min_price, max_price))
 
         return annotation, filter_condition
 
@@ -104,8 +103,8 @@ class SearchAgencies(generics.GenericAPIView):
             max_price = request.GET.get('max_price')
             channel_name = request.GET.get('channel_name')
             conditions = {
-                'production': request.GET.get('production'),
-                'peak_hour': request.GET.get('peak_hour'),
+                'production': request.GET.get('production', 'false'),
+                'peak_hour': request.GET.get('peak_hour', 'false'),
                 'normal': 'true',
             }
 
@@ -119,11 +118,14 @@ class SearchAgencies(generics.GenericAPIView):
                 agencies = agencies.filter(
                     channel_name__icontains=channel_name)
 
+            filtered_agencies = agencies
+
+            if (min_price and max_price):
              # Generate dynamic annotation and filter based on conditions
-            annotation, filter_condition = self.generate_annotation_and_filter(
-                conditions, min_price, max_price)
-            filtered_agencies = agencies.annotate(
-                total_sum=annotation).filter(filter_condition)
+                annotation, filter_condition = self.generate_annotation_and_filter(
+                    conditions, min_price, max_price)
+                filtered_agencies = agencies.annotate(
+                    total_sum=annotation).filter(filter_condition)
 
             results = filtered_agencies.values(
                 'id',
