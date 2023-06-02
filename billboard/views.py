@@ -3,8 +3,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
 from billboard.models import Billboard
-from django.db.models import Q
-from django.db.models import F
+from django.db.models import Q, F, Sum, Avg
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from billboard.serializers import BillboardSerializer
 from rest_framework.pagination import PageNumberPagination
@@ -20,7 +19,8 @@ class Billboards(generics.GenericAPIView):
 
     def get(self, request):
         try:
-            billboards = Billboard.objects.all()
+            billboards = Billboard.objects.annotate(
+                average_rating=Avg('rating__rating')).all()
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
@@ -87,47 +87,69 @@ class BillboardDetail(generics.GenericAPIView):
 class SearchBillboards(generics.GenericAPIView):
     serializer_class = BillboardSerializer
 
+    def generate_annotation_and_filter(self, conditions, min_price, max_price):
+        annotation = None
+        filter_condition = None
+
+        for key, value in conditions.items():
+            if value == 'true':
+                if annotation is None:
+                    annotation = Sum(key)
+                else:
+                    annotation += Sum(key)
+
+        filter_condition = Q(
+            total_sum__range=(min_price, max_price))
+
+        return annotation, filter_condition
+
     def get(self, request):
         try:
             query = request.GET.get('q')
             location_filter = request.GET.get('location')
-            has_production = request.GET.get('has_production')
             min_price = request.GET.get('min_price')
             max_price = request.GET.get('max_price')
             size_filter = request.GET.get('size')
-            billboards = Billboard.objects.all()
+
+            conditions = {
+                'has_production': request.GET.get('has_production', 'false'),
+                'daily_rate_per_sq': 'true',
+            }
+            billboards = Billboard.objects.annotate(
+                average_rating=Avg('rating__rating')).all()
             if query:
                 billboards = billboards.filter(Q(location__icontains=query) | Q(width__icontains=query) | Q(
-                    height__icontains=query) | Q(monthly_rate_per_sq__icontains=query) | Q(status__icontains=query))
+                    height__icontains=query) | Q(daily_rate_per_sq__icontains=query)
+                    | Q(production__icontains=query) | Q(status__icontains=query))
 
             if location_filter:
                 billboards = billboards.filter(
                     location__icontains=location_filter)
-            if has_production:
-                has_production = has_production.lower() == 'true'
-                billboards = billboards.filter(production=has_production)
-            if min_price:
-                min_price = Decimal(min_price)
-                billboards = billboards.filter(
-                    monthly_rate_per_sq__gte=min_price)
-            if max_price:
-                max_price = Decimal(max_price)
-                billboards = billboards.filter(
-                    monthly_rate_per_sq__lte=max_price)
+
             if size_filter:
                 size_filter = int(size_filter)
                 billboards = billboards.annotate(
                     area=F('width') * F('height')).filter(area__lte=size_filter)
 
-            results = billboards.values(
+            filtered_billboards = billboards
+            if (min_price and max_price):
+                # Generate dynamic annotation and filter based on conditions
+                annotation, filter_condition = self.generate_annotation_and_filter(
+                    conditions, min_price, max_price)
+                filtered_billboards = billboards.annotate(
+                    total_sum=annotation).filter(filter_condition)
+
+            results = filtered_billboards.values(
                 'location',
                 'width',
                 'height',
                 'rate',
                 'image',
-                'monthly_rate_per_sq',
+                'daily_rate_per_sq',
                 'production',
-                'status'
+                'status',
+                'description',
+                'average_rating'
             )
 
             paginator = PageNumberPagination()

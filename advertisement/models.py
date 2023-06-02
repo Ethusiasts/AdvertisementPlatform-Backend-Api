@@ -1,6 +1,6 @@
 from django.db import models
 from user.models import User
-
+from django.utils import timezone
 from user.models import User
 
 
@@ -23,5 +23,6 @@ class Advertisement(models.Model):
     quantity = models.IntegerField(default=0.0)
     advertisement_file = models.URLField(default=None)
     approved = models.BooleanField(default=False)
-    customer = models.ForeignKey(
+    user_id = models.ForeignKey(
         User, on_delete=models.CASCADE, default=None)
+    created_at = models.DateTimeField(default=timezone.now)

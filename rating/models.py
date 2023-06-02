@@ -17,8 +17,8 @@ class Rating(models.Model):
         Agency, on_delete=models.CASCADE, default=None, null=True, blank=True)
     billboard_id = models.ForeignKey(
         Billboard, on_delete=models.CASCADE, default=None, null=True, blank=True)
-    rating = models.PositiveIntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    rating = models.DecimalField(decimal_places=2, max_digits=10,
+                                 validators=[MinValueValidator(0), MaxValueValidator(5)], default=0.00)
     comment = models.CharField(max_length=128, default=None)
     entity_type = models.CharField(
         max_length=9, choices=ENTITY_CHOICES, default='Billboard')
