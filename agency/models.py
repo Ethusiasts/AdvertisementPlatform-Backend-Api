@@ -9,6 +9,9 @@ class Agency(models.Model):
     peak_hour = models.DecimalField(max_digits=10, decimal_places=2)
     normal = models.DecimalField(max_digits=10, decimal_places=2)
     production = models.DecimalField(max_digits=10, decimal_places=2)
+    image = models.URLField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
     channel_name = models.CharField(max_length=50, default=None)
 
     def __str__(self):

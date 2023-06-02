@@ -45,32 +45,32 @@ class Advertisements(generics.GenericAPIView):
 class AdvertisementDetail(generics.GenericAPIView):
     serializer_class = AdvertisementSerializer
 
-    def get_billboard(self, id):
+    def get_advertisement(self, id):
         try:
             return Advertisement.objects.get(id=id)
         except:
             return None
 
     def get(self, request, id):
-        billboard = self.get_billboard(id)
-        if billboard:
-            serializer = self.serializer_class(billboard)
+        advertisement = self.get_advertisement(id)
+        if advertisement:
+            serializer = self.serializer_class(advertisement)
             return success_200('', serializer.data)
         return error_404(f'Advertisement with id: {id} not found.')
 
     def put(self, request, id):
-        billboard = self.get_billboard(id)
-        if billboard == None:
-            return error_404(f'billboard with id: {id} not found.')
-        serializer = self.serializer_class(billboard, data=request.data)
+        advertisement = self.get_advertisement(id)
+        if advertisement == None:
+            return error_404(f'advertisement with id: {id} not found.')
+        serializer = self.serializer_class(advertisement, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)
         return error_400(serializer.errors)
 
     def delete(self, request, id):
-        billboard = self.get_billboard(id)
-        if billboard == None:
+        advertisement = self.get_advertisement(id)
+        if advertisement == None:
             return error_404(f'Advertisement with id: {id} not found.')
-        billboard.delete()
+        advertisement.delete()
         return success_204()

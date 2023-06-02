@@ -237,7 +237,7 @@ class UserAdvertisements(generics.GenericAPIView):
     def get(self, request, id):
         try:
             advertisements = Advertisement.objects.filter(
-                customer=id)
+                user_id=id)
             serialized_results = advertisements
             if advertisements:
                 serializer = self.serializer_class(advertisements, many=True)
