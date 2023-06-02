@@ -21,7 +21,7 @@ class Advertisement(models.Model):
     width = models.DecimalField(decimal_places=2, default=0.0, max_digits=15,)
     height = models.DecimalField(decimal_places=2, default=0.0, max_digits=15,)
     quantity = models.IntegerField(default=0.0)
-    advertisement_file = models.URLField(default=None)
+    advertisement_file = models.URLField(default=None, max_length=500)
     approved = models.BooleanField(default=False)
     user_id = models.ForeignKey(
         User, on_delete=models.CASCADE, default=None)
