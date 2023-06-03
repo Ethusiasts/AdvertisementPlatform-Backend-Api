@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_500, success_200, success_201, error_400, error_404, success_204
 from contract.models import Contract
-from contract.serializers import ContractSerializer
+from contract.serializers import ContractDetailSerializer, ContractSerializer
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -52,10 +52,15 @@ class ContractDetail(generics.GenericAPIView):
             return None
 
     def get(self, request, id):
-        contract = self.get_contract(id)
-        if contract:
-            return success_200('sucess', contract)
-        return error_404(f'Contract with id: {id} not found.')
+        try:
+            contract = self.get_contract(id)
+            if contract:
+                serializer = ContractDetailSerializer(contract)
+                return success_200('sucess', serializer.data)
+            return error_404(f'Contract with id: {id} not found.')
+        except Exception as e:
+            print(e)
+            return error_404(f'Contract with id: {id} not found.')
 
     def put(self, request, id):
         contract = self.get_contract(id)
