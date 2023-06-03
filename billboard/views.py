@@ -6,7 +6,7 @@ from advertisement_platform.errors import error_400, error_404, error_500, succe
 from billboard.models import Billboard
 from django.db.models import Q, F, Sum, Avg
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from billboard.serializers import BillboardSerializer
+from billboard.serializers import BillboardRatingSerializer, BillboardSearchSerializer, BillboardSerializer
 from rest_framework.pagination import PageNumberPagination
 
 from rating.models import Rating
@@ -20,15 +20,14 @@ class Billboards(generics.GenericAPIView):
 
     def get(self, request):
         try:
-            billboards = Billboard.objects.annotate(
-                average_rating=Avg('rating__rating')).all()
+            billboards = Billboard.objects.all()
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
             paginated_results = paginator.paginate_queryset(
                 billboards, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = BillboardRatingSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -63,7 +62,7 @@ class BillboardDetail(generics.GenericAPIView):
     def get(self, request, id):
         billboard = self.get_billboard(id)
         if billboard:
-            serializer = self.serializer_class(billboard)
+            serializer = BillboardRatingSerializer(billboard)
             return success_200('', serializer.data)
         return error_404(f'Billboard with id: {id} not found.')
 
@@ -86,7 +85,7 @@ class BillboardDetail(generics.GenericAPIView):
 
 
 class SearchBillboards(generics.GenericAPIView):
-    serializer_class = BillboardSerializer
+    serializer_class = BillboardRatingSerializer
 
     def generate_annotation_and_filter(self, conditions, min_price, max_price):
         annotation = None
@@ -109,7 +108,7 @@ class SearchBillboards(generics.GenericAPIView):
             query = request.GET.get('q')
             latitude = float(request.GET.get('latitude'))
             longitude = float(request.GET.get('longitude'))
-            radius = float(request.GET.get('radius'))
+            radius = float(request.GET.get('radius', '1'))
             min_price = request.GET.get('min_price')
             max_price = request.GET.get('max_price')
             size_filter = request.GET.get('size')
@@ -118,9 +117,8 @@ class SearchBillboards(generics.GenericAPIView):
                 'has_production': request.GET.get('has_production', 'false'),
                 'daily_rate_per_sq': 'true',
             }
+            # billboards = Billboard.objects.all()
             billboards = Billboard.objects.all()
-            # billboards = Billboard.objects.annotate(
-            #     average_rating=Avg('rating__rating')).all()
             if query:
                 billboards = billboards.filter(Q(latitude__icontains=query) | Q(longitude__icontains=query) | Q(width__icontains=query) | Q(
                     height__icontains=query) | Q(daily_rate_per_sq__icontains=query)
@@ -155,27 +153,27 @@ class SearchBillboards(generics.GenericAPIView):
                 filtered_billboards = billboards.annotate(
                     total_sum=annotation).filter(filter_condition)
 
-            results = filtered_billboards.values(
-                # 'location',
+            results = filtered_billboards.annotate(
+                average_rating=Avg('ratings__rating')).values(
                 'id',
                 'latitude',
                 'longitude',
                 'width',
                 'height',
-                # 'rate',
                 'image',
                 'daily_rate_per_sq',
                 'production',
                 'status',
                 'description',
-                # 'average_rating'
+                'average_rating'
             )
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
-            paginated_results = paginator.paginate_queryset(results, request)
+            paginated_results = paginator.paginate_queryset(
+                results, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = BillboardSearchSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -192,7 +190,6 @@ class BillboardRating(generics.GenericAPIView):
 
     def get(self, request, id):
         try:
-            print('innnn')
             ratings = Rating.objects.filter(
                 billboard_id=id)
             serialized_results = ratings
