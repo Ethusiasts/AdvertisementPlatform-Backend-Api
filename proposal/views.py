@@ -4,7 +4,7 @@ from advertisement_platform.errors import error_500, success_200, success_201, e
 from proposal.models import Proposal
 from rest_framework.pagination import PageNumberPagination
 
-from proposal.serializers import ProposalSerializer
+from proposal.serializers import ProposalDetailSerializer, ProposalSerializer
 # Create your views here.
 
 
@@ -50,10 +50,17 @@ class ProposalDetail(generics.GenericAPIView):
             return None
 
     def get(self, request, id):
-        proposal = self.get_proposal(id)
-        if proposal:
-            return success_200('sucess', proposal)
-        return error_404(f'Proposal with id: {id} not found.')
+        try:
+            proposal = Proposal.objects.select_related(
+                'billboard_id').get(id=id)
+
+            if proposal:
+                serializer = ProposalDetailSerializer(proposal)
+                return success_200('sucess', serializer.data)
+            return error_404(f'Proposal with id: {id} not found.')
+        except Exception as e:
+            print(e)
+            return error_500('internal server error')
 
     def put(self, request, id):
         proposal = self.get_proposal(id)

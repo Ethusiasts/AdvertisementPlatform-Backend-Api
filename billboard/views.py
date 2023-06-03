@@ -1,4 +1,5 @@
 from decimal import Decimal
+import math
 from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
@@ -106,7 +107,9 @@ class SearchBillboards(generics.GenericAPIView):
     def get(self, request):
         try:
             query = request.GET.get('q')
-            location_filter = request.GET.get('location')
+            latitude = float(request.GET.get('latitude'))
+            longitude = float(request.GET.get('longitude'))
+            radius = float(request.GET.get('radius'))
             min_price = request.GET.get('min_price')
             max_price = request.GET.get('max_price')
             size_filter = request.GET.get('size')
@@ -115,16 +118,29 @@ class SearchBillboards(generics.GenericAPIView):
                 'has_production': request.GET.get('has_production', 'false'),
                 'daily_rate_per_sq': 'true',
             }
-            billboards = Billboard.objects.annotate(
-                average_rating=Avg('rating__rating')).all()
+            billboards = Billboard.objects.all()
+            # billboards = Billboard.objects.annotate(
+            #     average_rating=Avg('rating__rating')).all()
             if query:
-                billboards = billboards.filter(Q(location__icontains=query) | Q(width__icontains=query) | Q(
+                billboards = billboards.filter(Q(latitude__icontains=query) | Q(longitude__icontains=query) | Q(width__icontains=query) | Q(
                     height__icontains=query) | Q(daily_rate_per_sq__icontains=query)
-                    | Q(production__icontains=query) | Q(status__icontains=query))
+                    | Q(production__icontains=query) | Q(status__icontains=query) | Q(description__icontains=query))
 
-            if location_filter:
-                billboards = billboards.filter(
-                    location__icontains=location_filter)
+            if latitude and longitude:
+                # Approximate latitude degrees per kilometer
+                min_latitude = latitude - (radius / 111)
+                max_latitude = latitude + (radius / 111)
+                # Approximate longitude degrees per kilometer
+                min_longitude = longitude - \
+                    (radius / (111 * abs(math.cos(math.radians(latitude)))))
+                max_longitude = longitude + \
+                    (radius / (111 * abs(math.cos(math.radians(latitude)))))
+
+                # Filter the search within the bounding box of the coordinates
+                billboards = billboards.filter(latitude__gte=min_latitude,
+                                               latitude__lte=max_latitude,
+                                               longitude__gte=min_longitude,
+                                               longitude__lte=max_longitude)
 
             if size_filter:
                 size_filter = int(size_filter)
@@ -140,16 +156,19 @@ class SearchBillboards(generics.GenericAPIView):
                     total_sum=annotation).filter(filter_condition)
 
             results = filtered_billboards.values(
-                'location',
+                # 'location',
+                'id',
+                'latitude',
+                'longitude',
                 'width',
                 'height',
-                'rate',
+                # 'rate',
                 'image',
                 'daily_rate_per_sq',
                 'production',
                 'status',
                 'description',
-                'average_rating'
+                # 'average_rating'
             )
 
             paginator = PageNumberPagination()
