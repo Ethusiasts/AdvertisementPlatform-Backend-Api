@@ -11,7 +11,7 @@ from billboard.models import Billboard
 class Proposal(models.Model):
     name = models.CharField(max_length=128)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    billBoard_id = models.ForeignKey(
+    billboard_id = models.ForeignKey(
         Billboard, on_delete=models.CASCADE, default=None)
     media_agency_id = models.ForeignKey(
         MediaAgency, on_delete=models.CASCADE, default=None)
