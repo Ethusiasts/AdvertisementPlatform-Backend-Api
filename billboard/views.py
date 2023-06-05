@@ -106,8 +106,8 @@ class SearchBillboards(generics.GenericAPIView):
     def get(self, request):
         try:
             query = request.GET.get('q')
-            latitude = float(request.GET.get('latitude'))
-            longitude = float(request.GET.get('longitude'))
+            latitude = request.GET.get('latitude')
+            longitude = request.GET.get('longitude')
             radius = float(request.GET.get('radius', '1'))
             min_price = request.GET.get('min_price')
             max_price = request.GET.get('max_price')
@@ -125,6 +125,8 @@ class SearchBillboards(generics.GenericAPIView):
                     | Q(production__icontains=query) | Q(status__icontains=query) | Q(description__icontains=query))
 
             if latitude and longitude:
+                latitude = float(latitude)
+                longitude = float(longitude)
                 # Approximate latitude degrees per kilometer
                 min_latitude = latitude - (radius / 111)
                 max_latitude = latitude + (radius / 111)
