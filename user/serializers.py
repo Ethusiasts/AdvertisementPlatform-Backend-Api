@@ -26,5 +26,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
 
 
 class ResetPasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField()
     new_password = serializers.CharField()
+
+    def validate_new_password(self, value):
+        return value

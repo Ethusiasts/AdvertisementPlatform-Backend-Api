@@ -5,14 +5,14 @@ from advertisement_platform.errors import error_400, error_404, error_500, succe
 from billboard.models import Billboard
 from billboard.serializers import BillboardSerializer
 from contract.models import Contract
-from contract.serializers import ContractSerializer
+from contract.serializers import ContractDetailSerializer, ContractSerializer
 from media_agency.models import MediaAgency
 from django.core.serializers import serialize
 from rest_framework.pagination import PageNumberPagination
 import json
 from media_agency.serializers import MediaAgencySerializer
 from proposal.models import Proposal
-from proposal.serializers import ProposalSerializer
+from proposal.serializers import ProposalDetailSerializer, ProposalSerializer
 # Create your views here.
 
 
@@ -110,7 +110,7 @@ class MediaAgencyBillboards(generics.GenericAPIView):
 
 
 class MediaAgencyProposals(generics.GenericAPIView):
-    serializer_class = ProposalSerializer
+    serializer_class = ProposalDetailSerializer
 
     def get(self, request, id):
         try:
@@ -138,7 +138,7 @@ class MediaAgencyProposals(generics.GenericAPIView):
 
 
 class MediaAgencyContracts(generics.GenericAPIView):
-    serializer_class = ContractSerializer
+    serializer_class = ContractDetailSerializer
 
     def get(self, request, id):
         try:

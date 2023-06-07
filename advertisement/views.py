@@ -1,8 +1,9 @@
 from rest_framework import generics, permissions, authentication
+# from advertisement.predict import checkImage
 
 from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
 from .models import Advertisement
-from .serializers import AdvertisementSerializer
+from .serializers import AdvertisementSerializer, ImageCheckerSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
@@ -74,3 +75,23 @@ class AdvertisementDetail(generics.GenericAPIView):
             return error_404(f'Advertisement with id: {id} not found.')
         advertisement.delete()
         return success_204()
+
+
+# class ImageCkecker(generics.GenericAPIView):
+#     serializer_class = ImageCheckerSerializer
+
+#     def post(self, request):
+#         try:
+#             serializer = self.serializer_class(data=request.data)
+#             if serializer.is_valid():
+#                 result = checkImage(request.data['image'])
+#                 if result == 0:
+#                     success_200('successfully checked', False)
+#                 elif result == 1:
+#                     return success_200('successfully created', True)
+#                 else:
+#                     return error_400("Image couldn't be loadded")
+
+#         except Exception as e:
+#             print(e)
+#             return error_400(e)

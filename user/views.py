@@ -10,13 +10,13 @@ from advertisement_platform import settings
 from advertisement_platform.settings import SECRET_KEY
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_login_200
 from contract.models import Contract
-from contract.serializers import ContractSerializer
+from contract.serializers import ContractDetailSerializer, ContractSerializer
 from proposal.models import Proposal
-from proposal.serializers import ProposalSerializer
+from proposal.serializers import ProposalDetailSerializer, ProposalSerializer
 from user.forms import ResetPasswordForm
 from advertisement_platform.helpers import send_email, valid_role
 from user.models import User, UserProfile, user_reset_password_token
-from user.serializers import ForgotPasswordSerializer, LoginSerializer, UserProfileSerializer, UserSerializer
+from user.serializers import ForgotPasswordSerializer, LoginSerializer, ResetPasswordSerializer, UserProfileSerializer, UserSerializer
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.response import Response
@@ -131,26 +131,35 @@ class ForgotPasswordAPI(generics.GenericAPIView):
         return error_400('bad request')
 
 
-def ResetPassword(request, token):
-    if request.method == 'POST':
-        form = ResetPasswordForm(request.POST)
-        if form.is_valid():
-            password = request.POST['new_password1']
-            confirm_password = request.POST['new_password2']
-            try:
-                token_obj = Token.objects.get(key=token)
-            except Token.DoesNotExist:
-                return render(request, '')
+class ResetPasswordAPI(generics.GenericAPIView):
+    serializer_class = ResetPasswordSerializer
 
-            if password != confirm_password:
-                raise forms.ValidationError("Passwords do not match")
+    def post(self, request):
 
-            user = User.objects.get(pk=token_obj.user_id)
-            user.set_password(password)
-            user.save()
-        return render(request, 'app/reset_password.html', {'form': form})
+        try:
+            token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+            if not token:
+                return Response({'message': 'unauthenticated user'})
 
-    return render(request, "app/reset_password.html")
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                new_password = serializer.validated_data.get(
+                    'new_password', '')
+                try:
+                    token_obj = Token.objects.get(key=token)
+
+                except Token.DoesNotExist:
+                    return error_400('Invalid token')
+
+                user = User.objects.get(pk=token_obj.user_id)
+                user.set_password(new_password)
+                user.save()
+                return success_200('password successfully updated', '')
+            return error_400('bad request')
+
+        except Exception as e:
+            print(e)
+            return error_500('internal server error')
 
 
 class UserProfileAPI(generics.GenericAPIView):
@@ -260,7 +269,7 @@ class UserAdvertisements(generics.GenericAPIView):
 
 
 class UserProposals(generics.GenericAPIView):
-    serializer_class = ProposalSerializer
+    serializer_class = ProposalDetailSerializer
 
     def get(self, request, id):
         try:
@@ -288,7 +297,7 @@ class UserProposals(generics.GenericAPIView):
 
 
 class UserContracts(generics.GenericAPIView):
-    serializer_class = ContractSerializer
+    serializer_class = ContractDetailSerializer
 
     def get(self, request, id):
         try:
