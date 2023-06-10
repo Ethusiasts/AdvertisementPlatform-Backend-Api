@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import generics
-from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
+from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
 from rating.models import Rating
 from django.db.models import Q
 from django.db.models import F
@@ -65,28 +65,34 @@ class RatingDetail(generics.GenericAPIView):
 
     def get_rating(self, id):
         try:
-            return Rating.objects.get(id=id, many=True)
+            return Rating.objects.get(id=id)
         except:
             return None
 
     def get(self, request, id):
-        entity_type = request.GET.get('entity_type')
+        # entity_type = request.GET.get('entity_type')
         try:
-            if entity_type == 'Billboard':
-                average_rating = Rating.objects.filter(
-                    billboard_id=id, entity_type=entity_type).aggregate(Avg('rating'))['rating__avg']
-            elif entity_type == 'Agency':
-                average_rating = Rating.objects.filter(
-                    agency_id=id, entity_type=entity_type).aggregate(Avg('rating'))['rating__avg']
-            else:
-                return error_404('Invalid entity type')
+            # if entity_type == 'Billboard':
+            #     average_rating = Rating.objects.filter(
+            #         billboard_id=id, entity_type=entity_type).aggregate(Avg('rating'))['rating__avg']
+            # elif entity_type == 'Agency':
+            #     average_rating = Rating.objects.filter(
+            #         agency_id=id, entity_type=entity_type).aggregate(Avg('rating'))['rating__avg']
+            # else:
+            #     return error_404('Invalid entity type')
 
-            response = {'average_rating': average_rating}
+            # response = {'average_rating': average_rating}
 
-            return JsonResponse(response, status=200)
+            # return JsonResponse(response, status=200)
+            rating = self.get_rating(id)
+            if rating:
+                serializer = self.serializer_class(rating)
+                return success_200('sucess', serializer.data)
+            return error_404(f'rating with id: {id} not found.')
+
         except Exception as e:
             print(e)
-            return error_404(f'Rating with id: {id} not found.')
+            return error_500('internal server error')
 
     def put(self, request, id):
         rating = self.get_rating(id)

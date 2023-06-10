@@ -12,11 +12,11 @@ from advertisement_platform.errors import error_400, error_404, error_500, succe
 from contract.models import Contract
 from contract.serializers import ContractDetailSerializer, ContractSerializer
 from proposal.models import Proposal
-from proposal.serializers import ProposalDetailSerializer, ProposalSerializer
+from proposal.serializers import ProposalDetailSerializer, ProposalGetSerializer
 from user.forms import ResetPasswordForm
 from advertisement_platform.helpers import send_email, valid_role
 from user.models import User, UserProfile, user_reset_password_token
-from user.serializers import ForgotPasswordSerializer, LoginSerializer, ResetPasswordSerializer, UserProfileSerializer, UserSerializer
+from user.serializers import ForgotPasswordSerializer, LoginSerializer, ResetPasswordSerializer, UserPostSerializer, UserProfileSerializer, UserGetSerializer
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.response import Response
@@ -27,7 +27,7 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class SignUpAPI(generics.GenericAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserPostSerializer
 
     def post(self, request):
         try:
@@ -250,7 +250,7 @@ class GetUser(APIView):
             if request.method == 'GET':
                 users = User.objects.all()
                 print(users)
-                serializer = UserSerializer(users, many=True)
+                serializer = UserGetSerializer(users, many=True)
                 return success_200('sucess', serializer.data)
             return Response({'message': 'something went wrong'})
 
