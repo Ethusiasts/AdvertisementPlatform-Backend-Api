@@ -63,15 +63,19 @@ class ContractDetail(generics.GenericAPIView):
             return error_404(f'Contract with id: {id} not found.')
 
     def put(self, request, id):
-        contract = self.get_contract(id)
-        if contract == None:
-            return error_404(f'Contract with id: {id} not found.')
-
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return success_200('sucess', contract)
-        return error_400(serializer.errors)
+        try:
+            contract = self.get_contract(id)
+            if contract == None:
+                return error_404(f'Contract with id: {id} not found.')
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                print('check')
+                serializer.save()
+                return success_200('sucess', serializer.data)
+            return error_400(serializer.errors)
+        except Exception as e:
+            print(e)
+            return error_500('internal server error')
 
     def delete(self, request, id):
         contract = self.get_contract(id)

@@ -27,14 +27,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 # User profile mode.
 class UserProfile(models.Model):
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50, default=None)
     last_name = models.CharField(max_length=50, default=None)
-    username = models.CharField(max_length=50)
-    profile_picture = models.URLField()
-    phone_number = PhoneNumberField()
-    first_name = models.CharField(max_length=50, default=None)
-    last_name = models.CharField(max_length=50, default=None)
+    username = models.CharField(max_length=50, default=None)
+    profile_picture = models.URLField(default=None)
+    phone_number = PhoneNumberField(default=None)
 
     def __str__(self):
         return self.user.email

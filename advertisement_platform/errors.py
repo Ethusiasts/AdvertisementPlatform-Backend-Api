@@ -10,9 +10,10 @@ def success_200(message, data):
                     }, status=status.HTTP_200_OK)
 
 
-def success_login_200(message, data):
+def success_login_200(message, data, firstTimeLogin):
     return Response({
                     'status': 200,
+                    'firstTimeLogin': firstTimeLogin,
                     'message': message,
                     'token': data
                     }, status=status.HTTP_200_OK)

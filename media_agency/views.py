@@ -3,21 +3,21 @@ from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
 from billboard.models import Billboard
-from billboard.serializers import BillboardSerializer
+from billboard.serializers import BillboardGetSerializer, BillboardGetSerializer
 from contract.models import Contract
 from contract.serializers import ContractDetailSerializer, ContractSerializer
 from media_agency.models import MediaAgency
 from django.core.serializers import serialize
 from rest_framework.pagination import PageNumberPagination
 import json
-from media_agency.serializers import MediaAgencySerializer
+from media_agency.serializers import MediaAgencyGetSerializer, MediaAgencyPostSerializer
 from proposal.models import Proposal
 from proposal.serializers import ProposalDetailSerializer, ProposalSerializer
 # Create your views here.
 
 
 class MediaAgencies(generics.GenericAPIView):
-    serializer_class = MediaAgencySerializer
+    serializer_class = MediaAgencyPostSerializer
 
     def get(self, request):
         try:
@@ -28,7 +28,7 @@ class MediaAgencies(generics.GenericAPIView):
             paginated_results = paginator.paginate_queryset(
                 media_agencies, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = MediaAgencyGetSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -40,7 +40,7 @@ class MediaAgencies(generics.GenericAPIView):
             return error_400(serialized_results.errors)
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+        serializer = MediaAgencyPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return success_201('successfully created', serializer.data)
@@ -48,7 +48,7 @@ class MediaAgencies(generics.GenericAPIView):
 
 
 class MediaAgencyDetail(generics.GenericAPIView):
-    serializer_class = MediaAgencySerializer
+    serializer_class = MediaAgencyPostSerializer
 
     def get_media_agency(self, id):
         try:
@@ -59,7 +59,7 @@ class MediaAgencyDetail(generics.GenericAPIView):
     def get(self, request, id):
         media_agency = self.get_media_agency(id)
         if media_agency:
-            serializer = self.serializer_class(media_agency)
+            serializer = MediaAgencyGetSerializer(media_agency)
             return success_200('', serializer.data)
         return error_404(f'MediaAgency with id: {id} not found.')
 
@@ -67,7 +67,7 @@ class MediaAgencyDetail(generics.GenericAPIView):
         media_agency = self.get_media_agency(id)
         if media_agency == None:
             return error_404(f'media_agency with id: {id} not found.')
-        serializer = self.serializer_class(media_agency, data=request.data)
+        serializer = MediaAgencyPostSerializer(media_agency, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)
@@ -82,7 +82,7 @@ class MediaAgencyDetail(generics.GenericAPIView):
 
 
 class MediaAgencyBillboards(generics.GenericAPIView):
-    serializer_class = BillboardSerializer
+    serializer_class = BillboardGetSerializer
 
     def get(self, request, id):
         try:

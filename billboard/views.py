@@ -6,7 +6,7 @@ from advertisement_platform.errors import error_400, error_404, error_500, succe
 from billboard.models import Billboard
 from django.db.models import Q, F, Sum, Avg
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from billboard.serializers import BillboardRatingSerializer, BillboardSearchSerializer, BillboardSerializer
+from billboard.serializers import BillboardPostSerializer, BillboardRatingSerializer, BillboardSearchSerializer
 from rest_framework.pagination import PageNumberPagination
 
 from rating.models import Rating
@@ -15,7 +15,7 @@ from rating.serializers import RatingSerializer
 
 
 class Billboards(generics.GenericAPIView):
-    serializer_class = BillboardSerializer
+    serializer_class = BillboardPostSerializer
     parser_classes = (MultiPartParser, JSONParser)
 
     def get(self, request):
@@ -50,7 +50,7 @@ class Billboards(generics.GenericAPIView):
 
 
 class BillboardDetail(generics.GenericAPIView):
-    serializer_class = BillboardSerializer
+    serializer_class = BillboardPostSerializer
     parser_classes = (MultiPartParser,)
 
     def get_billboard(self, id):

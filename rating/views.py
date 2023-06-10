@@ -9,6 +9,9 @@ from django.db.models import F
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rating.serializers import RatingSerializer
 from django.db.models import Avg
+from rest_framework.pagination import PageNumberPagination
+
+
 # Create your views here.
 
 
@@ -28,11 +31,22 @@ class Ratings(generics.GenericAPIView):
     def get(self, request):
         try:
             ratings = Rating.objects.all()
-            serializer = self.serializer_class(ratings, many=True)
-            return success_200('sucess', serializer.data)
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(
+                ratings, request)
+
+            serialized_results = self.serializer_class(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No ratings found', [])
         except Exception as e:
             print(e)
-            return error_400(serializer.errors)
+            return error_400(serialized_results.errors)
 
     def post(self, request):
         try:
