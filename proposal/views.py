@@ -4,12 +4,12 @@ from advertisement_platform.errors import error_500, success_200, success_201, e
 from proposal.models import Proposal
 from rest_framework.pagination import PageNumberPagination
 
-from proposal.serializers import ProposalDetailSerializer, ProposalSerializer
+from proposal.serializers import ProposalDetailSerializer, ProposalGetSerializer, ProposalPostSerializer
 # Create your views here.
 
 
 class Proposals(generics.GenericAPIView):
-    serializer_class = ProposalSerializer
+    serializer_class = ProposalPostSerializer
 
     def get(self, request):
         try:
@@ -20,7 +20,7 @@ class Proposals(generics.GenericAPIView):
             paginated_results = paginator.paginate_queryset(
                 proposals, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = ProposalGetSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -41,7 +41,7 @@ class Proposals(generics.GenericAPIView):
 
 
 class ProposalDetail(generics.GenericAPIView):
-    serializer_class = ProposalSerializer
+    serializer_class = ProposalPostSerializer
 
     def get_proposal(self, id):
         try:
@@ -67,10 +67,10 @@ class ProposalDetail(generics.GenericAPIView):
         if proposal == None:
             return error_404(f'Proposal with id: {id} not found.')
 
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(proposal, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return success_200('sucess', proposal)
+            return success_200('sucess', serializer.data)
         return error_400(serializer.errors)
 
     def delete(self, request, id):

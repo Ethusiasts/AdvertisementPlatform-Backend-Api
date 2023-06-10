@@ -4,7 +4,7 @@ from rest_framework import status
 from user.models import user_reset_password_token
 from django.urls import reverse
 from user.models import User
-from user.serializers import UserSerializer
+from user.serializers import UserGetSerializer
 from rest_framework.authtoken.models import Token
 
 

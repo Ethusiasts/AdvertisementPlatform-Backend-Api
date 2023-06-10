@@ -12,7 +12,7 @@ from rest_framework.pagination import PageNumberPagination
 import json
 from media_agency.serializers import MediaAgencyGetSerializer, MediaAgencyPostSerializer
 from proposal.models import Proposal
-from proposal.serializers import ProposalDetailSerializer, ProposalSerializer
+from proposal.serializers import ProposalDetailSerializer, ProposalGetSerializer
 # Create your views here.
 
 
