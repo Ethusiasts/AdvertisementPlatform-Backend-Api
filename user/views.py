@@ -5,7 +5,7 @@ import jwt
 from django.urls import reverse
 from rest_framework.views import APIView
 from advertisement.models import Advertisement
-from advertisement.serializers import AdvertisementSerializer
+from advertisement.serializers import AdvertisementGetSerializer
 from advertisement_platform import settings
 from advertisement_platform.settings import SECRET_KEY
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_login_200
@@ -62,16 +62,24 @@ class LoginAPI(generics.GenericAPIView):
 
     def post(self, request):
         try:
+            firstTimeLogin = True
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 email = request.data['email']
                 password = request.data['password']
                 user = authenticate(email=email, password=password)
+                # Check if the user has a related profile
+
             if user is None:
                 return error_400('email or password is incorrect')
 
             if not user.is_verified:
                 return error_400('your account is not activated')
+
+            has_profile = UserProfile.objects.filter(user=user).exists()
+
+            if has_profile:
+                firstTimeLogin = False
 
             payload = ({
                 'id': user.id,
@@ -83,11 +91,12 @@ class LoginAPI(generics.GenericAPIView):
                                algorithm='HS256')
 
             return success_login_200(
-                'You are successfully logged in.', token
+                'You are successfully logged in.', token, firstTimeLogin
             )
 
         except Exception as e:
-            return error_400('bad request')
+            print(e)
+            return error_500('something went wrong')
 
 
 class ActivateAccountView(APIView):
@@ -178,12 +187,22 @@ class UserProfileDetailAPI(generics.GenericAPIView):
     serializer_class = UserProfileSerializer
     parser_classes = (MultiPartParser, JSONParser)
 
+    def get_user_profile(self, id):
+        try:
+            return UserProfile.objects.get(id=id)
+        except:
+            return None
+
     def get(self, request, id):
-        user_profile = UserProfile.objects.get(id=id)
-        if user_profile:
-            serializer = self.serializer_class(user_profile)
-            return success_200('sucess', serializer.data)
-        return error_404(f'Userprofile with id: {id} not found.')
+        try:
+            user_profile = self.get_user_profile(id)
+            if user_profile:
+                serializer = self.serializer_class(user_profile)
+                return success_200('sucess', serializer.data)
+            return error_404(f'Userprofile with id: {id} not found.')
+        except Exception as e:
+            print(e)
+            return error_500('something went wrong')
 
     def put(self, request, id):
         user_profile = UserProfile.objects.get(id=id)
@@ -241,7 +260,7 @@ class GetUser(APIView):
 
 
 class UserAdvertisements(generics.GenericAPIView):
-    serializer_class = AdvertisementSerializer
+    serializer_class = AdvertisementGetSerializer
 
     def get(self, request, id):
         try:

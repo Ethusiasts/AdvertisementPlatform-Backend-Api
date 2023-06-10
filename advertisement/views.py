@@ -1,16 +1,16 @@
 from rest_framework import generics, permissions, authentication
 # from advertisement.predict import checkImage
 
-from advertisement_platform.errors import error_400, error_404, success_200, success_201, success_204
+from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
 from .models import Advertisement
-from .serializers import AdvertisementSerializer, ImageCheckerSerializer
+from .serializers import AdvertisementGetSerializer, AdvertisementPostSerializer, ImageCheckerSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
 
 class Advertisements(generics.GenericAPIView):
-    serializer_class = AdvertisementSerializer
+    serializer_class = AdvertisementPostSerializer
 
     def get(self, request):
         try:
@@ -21,7 +21,7 @@ class Advertisements(generics.GenericAPIView):
             paginated_results = paginator.paginate_queryset(
                 advertisements, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = AdvertisementGetSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -30,7 +30,7 @@ class Advertisements(generics.GenericAPIView):
                 return success_200('No advertisements found', [])
         except Exception as e:
             print(e)
-            return error_400(serialized_results.errors)
+            return error_500('internal server error')
 
     def post(self, request):
         try:
@@ -38,13 +38,15 @@ class Advertisements(generics.GenericAPIView):
             if serializer.is_valid():
                 serializer.save()
                 return success_201('successfully created', serializer.data)
+            else:
+                print(serializer.errors)
         except Exception as e:
             print(e)
-            return error_400(e)
+            return error_500('internal server error')
 
 
 class AdvertisementDetail(generics.GenericAPIView):
-    serializer_class = AdvertisementSerializer
+    serializer_class = AdvertisementPostSerializer
 
     def get_advertisement(self, id):
         try:
@@ -55,7 +57,7 @@ class AdvertisementDetail(generics.GenericAPIView):
     def get(self, request, id):
         advertisement = self.get_advertisement(id)
         if advertisement:
-            serializer = self.serializer_class(advertisement)
+            serializer = AdvertisementGetSerializer(advertisement)
             return success_200('', serializer.data)
         return error_404(f'Advertisement with id: {id} not found.')
 

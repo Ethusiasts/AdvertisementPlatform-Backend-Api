@@ -6,7 +6,15 @@ from django.db.models import Avg
 from rating.models import Rating
 
 
-class BillboardSerializer(serializers.ModelSerializer):
+class BillboardPostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Billboard
+        fields = ['daily_rate_per_sq', 'image', 'width', 'height', 'production', 'status',
+                  'description', 'latitude', 'longitude', 'media_agency_id']
+
+
+class BillboardGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Billboard
@@ -22,7 +30,8 @@ class BillboardRatingSerializer(serializers.ModelSerializer):
                   'production', 'paid', 'status', 'description', 'latitude', 'longitude', 'created_at', 'average_rating']
 
     def get_average_rating(self, obj):
-        return obj.ratings.aggregate(avg_rating=Avg('rating'))['avg_rating']
+        average = obj.ratings.aggregate(avg_rating=Avg('rating'))['avg_rating']
+        return average if average is not None else 0
 
 
 class BillboardSearchSerializer(serializers.ModelSerializer):

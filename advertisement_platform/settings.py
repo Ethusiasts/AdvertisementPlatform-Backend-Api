@@ -35,14 +35,14 @@ SECRET_KEY = 'django-insecure-ib7h*qy2i$e0khaatp)ja_%$re^+nah*k(+ulfrp^6*dmzar$$
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST_USER = 'se.biruk.ayalew@gmail.com'
+EMAIL_HOST_USER = 'se.sador.tadesse@gmail.com'
 
-DEFAULT_FROM_EMAIL = 'se.biruk.ayalew@gmail.com'
-SERVER_EMAIL = 'se.biruk.ayalew@gmail.com'
+DEFAULT_FROM_EMAIL = 'se.sador.tadesse@gmail.com'
+SERVER_EMAIL = 'se.sador.tadesse@gmail.com'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_PASSWORD = 'vuomdjnxjbgsypzt'
+EMAIL_HOST_PASSWORD = 'zxcdbdgyzlxojerc'
 
 EMAIL_USE_TLS = True
 # SECURITY WARNING: don't run with debug turned on in production!
