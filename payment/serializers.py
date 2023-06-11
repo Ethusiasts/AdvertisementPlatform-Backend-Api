@@ -21,7 +21,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         tx_ref = validated_data.get('tx_ref')
-        user_id, billboard_id, date_time = tx_ref.split('/')
+        user_id, billboard_id, date_time = tx_ref.split('-')
         # Update the paid attribute of the specific billboard
         billboard = Billboard.objects.get(pk=billboard_id)
         billboard.paid = True
