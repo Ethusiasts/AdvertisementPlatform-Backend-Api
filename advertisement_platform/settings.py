@@ -56,6 +56,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'user',
+    'payment',
     'advertisement',
     'billboard',
     'proposal',
