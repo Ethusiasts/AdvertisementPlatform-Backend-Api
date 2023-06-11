@@ -83,6 +83,7 @@ class LoginAPI(generics.GenericAPIView):
 
             payload = ({
                 'id': user.id,
+                'email': user.email,
                 'role': user.role,
                 'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
             })
