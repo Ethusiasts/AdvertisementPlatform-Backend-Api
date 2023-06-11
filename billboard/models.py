@@ -13,6 +13,12 @@ class Billboard(models.Model):
         ('Occupied', 'Occupied'),
     ]
 
+    APPROVAL_CHOICES = [
+        (0, 0),
+        (1, 1),
+        (2, 2),
+    ]
+
     daily_rate_per_sq = models.DecimalField(
         max_digits=8, decimal_places=2, default=0)
     image = models.URLField(max_length=500)
@@ -20,7 +26,7 @@ class Billboard(models.Model):
     height = models.IntegerField()
     media_agency_id = models.ForeignKey(
         MediaAgency, on_delete=models.CASCADE, default=None)
-    approved = models.BooleanField(default=False)
+    approved = models.PositiveIntegerField(choices=APPROVAL_CHOICES, default=1)
     production = models.DecimalField(
         max_digits=11, decimal_places=2, default=None)
     paid = models.BooleanField(default=False)

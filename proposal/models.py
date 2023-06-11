@@ -9,6 +9,12 @@ from billboard.models import Billboard
 
 
 class Proposal(models.Model):
+    APPROVAL_CHOICES = [
+        (0, 0),
+        (1, 1),
+        (2, 2),
+    ]
+
     name = models.CharField(max_length=128)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     billboard_id = models.ForeignKey(
@@ -20,4 +26,4 @@ class Proposal(models.Model):
     description = models.TextField()
     total_price = models.DecimalField(
         decimal_places=2, default=0.0, max_digits=15,)
-    approved = models.BooleanField(default=False)
+    approved = models.PositiveIntegerField(choices=APPROVAL_CHOICES, default=1)
