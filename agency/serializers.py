@@ -10,13 +10,26 @@ class AgencySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# class AgencyRatingSerializer(serializers.ModelSerializer):
+#     average_rating = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Agency
+#         fields = ['id', 'peak_hour', 'normal', 'production', 'image',
+#                   'latitude', 'longitude', 'channel_name', 'media_agency_id', 'average_rating'],
+
+#     def get_average_rating(self, obj):
+#         average = obj.ratings.filter(entity_type="Agency").aggregate(
+#             avg_rating=Avg('rating'))['avg_rating']
+#         return average if average is not None else 0
+
 class AgencyRatingSerializer(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Agency
-        fields = ['id', 'peak_hour', 'normal', 'production', 'image',
-                  'latitude', 'longitude', 'channel_name', 'media_agency_id', 'average_rating'],
+        fields = ['id', 'peak_hour', 'image', 'normal', 'production', 'media_agency_id', 'image',
+                  'latitude', 'longitude', 'channel_name', 'average_rating']
 
     def get_average_rating(self, obj):
         average = obj.ratings.filter(entity_type="Agency").aggregate(
