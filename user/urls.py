@@ -6,7 +6,7 @@ urlpatterns = [
     path('signup', SignUpAPI.as_view(), name="register"),
     path('login', LoginAPI.as_view(), name="login"),
     path('forgot-password', ForgotPasswordAPI.as_view(), name='forgot-password'),
-    path('reset-password/<token>',
+    path('reset-password',
          ResetPasswordAPI.as_view(), name='reset-password'),
     path('activate/<token>/',
          ActivateAccountView.as_view(), name='activate'),

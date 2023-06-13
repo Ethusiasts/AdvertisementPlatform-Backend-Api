@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from advertisement.models import Advertisement
 from advertisement.serializers import AdvertisementGetSerializer
 from advertisement_platform import settings
-from advertisement_platform.settings import SECRET_KEY
+from advertisement_platform.settings import PASSWORD_RESET_BASE_URL, SECRET_KEY
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_login_200
 from contract.models import Contract
 from contract.serializers import ContractDetailSerializer, ContractSerializer
@@ -24,6 +24,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.pagination import PageNumberPagination
+from urllib.parse import urljoin
 
 
 class SignUpAPI(generics.GenericAPIView):
@@ -131,8 +132,7 @@ class ForgotPasswordAPI(generics.GenericAPIView):
                     return Response({'message': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
                 token = user_reset_password_token._create_token(user)
-                reset_password_link = request.build_absolute_uri(
-                    reverse('reset-password', kwargs={'token': token}))
+                reset_password_link = f'{PASSWORD_RESET_BASE_URL}/resetpassword/{token}'
 
                 send_email('Reset Your Password',
                            'Please click the following link to reset your password', email, reset_password_link)

@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 BASE_URL = "https://advertisementplatform-0xpy.onrender.com"
 
+PASSWORD_RESET_BASE_URL = "http://127.0.0.1:3000"
 
 env = environ.Env()
 
