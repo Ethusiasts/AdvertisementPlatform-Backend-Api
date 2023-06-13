@@ -14,7 +14,7 @@ class Rating(models.Model):
     ]
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     agency_id = models.ForeignKey(
-        Agency, on_delete=models.CASCADE, default=None, null=True, blank=True)
+        Agency, on_delete=models.CASCADE, default=None, null=True, blank=True, related_name='ratings')
     billboard_id = models.ForeignKey(
         Billboard, on_delete=models.CASCADE, default=None, null=True, blank=True, related_name='ratings')
     rating = models.DecimalField(decimal_places=2, max_digits=10,

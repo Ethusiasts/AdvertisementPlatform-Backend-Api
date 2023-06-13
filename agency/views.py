@@ -3,9 +3,9 @@ from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
 from agency.models import Agency
-from django.db.models import Q, Sum, F, Case, When, Value, DecimalField
+from django.db.models import Q, Sum, F, Case, When, Value, DecimalField, Avg
 from django.db.models import F
-from agency.serializers import AgencyRatingSerializer, AgencySerializer
+from agency.serializers import AgencyRatingSerializer, AgencySearchSerializer, AgencySerializer
 from rest_framework.pagination import PageNumberPagination
 from rating.models import Rating
 
@@ -24,7 +24,7 @@ class Agencies(generics.GenericAPIView):
             paginated_results = paginator.paginate_queryset(
                 agencies, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = AgencyRatingSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -81,7 +81,7 @@ class AgencyDetail(generics.GenericAPIView):
 
 
 class SearchAgencies(generics.GenericAPIView):
-    serializer_class = AgencySerializer
+    serializer_class = AgencyRatingSerializer
 
     def generate_annotation_and_filter(self, conditions, min_price, max_price):
         annotation = None
@@ -130,19 +130,25 @@ class SearchAgencies(generics.GenericAPIView):
                 filtered_agencies = agencies.annotate(
                     total_sum=annotation).filter(filter_condition)
 
-            results = filtered_agencies.values(
+            results = filtered_agencies.annotate(
+                average_rating=Avg('ratings__rating')).values(
                 'id',
+                'image',
+                'media_agency_id_id',
                 'channel_name',
                 'peak_hour',
                 'normal',
                 'production',
+                'latitude',
+                'longitude',
+                'average_rating'
             )
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
             paginated_results = paginator.paginate_queryset(results, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = AgencySearchSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -151,7 +157,7 @@ class SearchAgencies(generics.GenericAPIView):
                 return success_200('No results found', [])
         except Exception as e:
             print(e)
-            return error_404('Page not found.')
+            return error_500(e)
 
 
 class AgencyRating(generics.GenericAPIView):
