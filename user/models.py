@@ -27,7 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 # User profile mode.
 class UserProfile(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, unique=True)
     first_name = models.CharField(max_length=50, default=None)
     last_name = models.CharField(max_length=50, default=None)
     username = models.CharField(max_length=50, default=None)

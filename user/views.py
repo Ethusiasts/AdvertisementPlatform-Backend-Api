@@ -8,7 +8,7 @@ from advertisement.models import Advertisement
 from advertisement.serializers import AdvertisementGetSerializer
 from advertisement_platform import settings
 from advertisement_platform.settings import PASSWORD_RESET_BASE_URL, SECRET_KEY
-from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_login_200
+from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204, success_login_200
 from contract.models import Contract
 from contract.serializers import ContractDetailSerializer, ContractSerializer
 from media_agency.models import MediaAgency
@@ -220,7 +220,7 @@ class UserProfileDetailAPI(generics.GenericAPIView):
 
     def get_user_profile(self, id):
         try:
-            return UserProfile.objects.get(user=id)
+            return UserProfile.objects.filter(user_id=id).first()
         except:
             return None
 
@@ -244,6 +244,18 @@ class UserProfileDetailAPI(generics.GenericAPIView):
             serializer.save()
             return success_200('sucess', serializer.data)
         return error_400(serializer.errors)
+
+    def delete(self, request, id):
+        try:
+            userProfile = UserProfile.objects.get(id=id)
+            if userProfile is None:
+                return error_404(f'Billboard with id: {id} not found.')
+
+            userProfile.delete()
+            return success_204()
+        except Exception as e:
+            print(e)
+            return Response({'message': 'something went wrong'})
 
 
 # Code below is for test only.
