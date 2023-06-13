@@ -11,6 +11,7 @@ from advertisement_platform.settings import PASSWORD_RESET_BASE_URL, SECRET_KEY
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_login_200
 from contract.models import Contract
 from contract.serializers import ContractDetailSerializer, ContractSerializer
+from media_agency.models import MediaAgency
 from proposal.models import Proposal
 from proposal.serializers import ProposalDetailSerializer, ProposalGetSerializer
 from user.forms import ResetPasswordForm
@@ -65,6 +66,7 @@ class LoginAPI(generics.GenericAPIView):
         try:
             firstTimeLogin = True
             serializer = self.serializer_class(data=request.data)
+            has_profile = True
             if serializer.is_valid():
                 email = request.data['email']
                 password = request.data['password']
@@ -77,7 +79,11 @@ class LoginAPI(generics.GenericAPIView):
             if not user.is_verified:
                 return error_400('your account is not activated')
 
-            has_profile = UserProfile.objects.filter(user=user).exists()
+            if user.role == 'Customer':
+                has_profile = UserProfile.objects.filter(user=user).exists()
+
+            if (user.role == 'LANDOWNER' or user.role == 'TV' or user.role == 'RADIO'):
+                has_profile = MediaAgency.objects.filter(user=user).exists()
 
             if has_profile:
                 firstTimeLogin = False
@@ -182,14 +188,14 @@ class UserProfileAPI(generics.GenericAPIView):
 
     def get(self, request):
         try:
-            billboards = User.objects.all()
+            billboards = UserProfile.objects.all()
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
             paginated_results = paginator.paginate_queryset(
                 billboards, request)
 
-            serialized_results = UserGetSerializer(
+            serialized_results = UserProfileSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
