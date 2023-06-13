@@ -31,7 +31,7 @@ class UserProfile(models.Model):
     first_name = models.CharField(max_length=50, default=None)
     last_name = models.CharField(max_length=50, default=None)
     username = models.CharField(max_length=50, default=None)
-    profile_picture = models.URLField(default=None)
+    profile_picture = models.URLField(default=None, max_length=1000)
     phone_number = PhoneNumberField(default=None)
 
     def __str__(self):

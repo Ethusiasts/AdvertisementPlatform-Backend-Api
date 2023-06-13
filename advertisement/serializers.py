@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from .models import Advertisement, ImageChecker
+from .models import Advertisement
 
 
 class AdvertisementPostSerializer(serializers.ModelSerializer):
@@ -19,8 +19,5 @@ class AdvertisementGetSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ImageCheckerSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ImageChecker
-        fields = ['image']
+class ImageCheckerSerializer(serializers.Serializer):
+    image = serializers.CharField(max_length=500)

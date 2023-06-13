@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions, authentication
+from advertisement.predict import checkImage
 # from advertisement.predict import checkImage
 
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
@@ -7,6 +8,9 @@ from .serializers import AdvertisementGetSerializer, AdvertisementPostSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.parsers import MultiPartParser, JSONParser
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class Advertisements(generics.GenericAPIView):
@@ -79,21 +83,27 @@ class AdvertisementDetail(generics.GenericAPIView):
         return success_204()
 
 
-# class ImageCkecker(generics.GenericAPIView):
-#     serializer_class = ImageCheckerSerializer
+class ImageCkecker(generics.GenericAPIView):
+    serializer_class = ImageCheckerSerializer
+    parser_classes = (MultiPartParser, JSONParser)
 
-#     def post(self, request):
-#         try:
-#             serializer = self.serializer_class(data=request.data)
-#             if serializer.is_valid():
-#                 result = checkImage(request.data['image'])
-#                 if result == 0:
-#                     success_200('successfully checked', False)
-#                 elif result == 1:
-#                     return success_200('successfully created', True)
-#                 else:
-#                     return error_400("Image couldn't be loadded")
+    def post(self, request):
+        # print(request.data['image'])
+        try:
+            print('innnn')
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                image_url = serializer.validated_data['image']
+                result = checkImage(image_url)
+                if result == 0:
+                    return success_200('successfully checked', False)
+                elif result == 1:
+                    return success_200('successfully checked', True)
+                else:
+                    return error_400("Image couldn't be loadded")
+            else:
+                print(serializer.errors)
 
-#         except Exception as e:
-#             print(e)
-#             return error_400(e)
+        except Exception as e:
+            print(e)
+            return error_400(e)
