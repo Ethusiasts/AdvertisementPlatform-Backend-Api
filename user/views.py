@@ -121,24 +121,28 @@ class ForgotPasswordAPI(generics.GenericAPIView):
     serializer_class = ForgotPasswordSerializer
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            email = serializer.validated_data['email']
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                return Response({'message': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                email = serializer.validated_data['email']
+                try:
+                    user = User.objects.get(email=email)
+                except User.DoesNotExist:
+                    return Response({'message': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
-            token = user_reset_password_token._create_token(user)
-            reset_password_link = request.build_absolute_uri(
-                reverse('reset-password', kwargs={'token': token}))
+                token = user_reset_password_token._create_token(user)
+                reset_password_link = request.build_absolute_uri(
+                    reverse('reset-password', kwargs={'token': token}))
 
-            send_email('Reset Your Password',
-                       'Please click the following link to reset your password', email, reset_password_link)
-            return success_200(
-                'A link to reset your password has been sent to your email.', ''
-            )
-        return error_400('bad request')
+                send_email('Reset Your Password',
+                           'Please click the following link to reset your password', email, reset_password_link)
+                return success_200(
+                    'A link to reset your password has been sent to your email.', ''
+                )
+            return error_400('bad request')
+        except Exception as e:
+            print(e)
+            return error_500(e)
 
 
 class ResetPasswordAPI(generics.GenericAPIView):
@@ -176,6 +180,26 @@ class UserProfileAPI(generics.GenericAPIView):
     serializer_class = UserProfileSerializer
     parser_classes = (MultiPartParser, JSONParser)
 
+    def get(self, request):
+        try:
+            billboards = User.objects.all()
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(
+                billboards, request)
+
+            serialized_results = UserGetSerializer(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No profiles found', [])
+        except Exception as e:
+            print(e)
+            return error_400(serialized_results.errors)
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -190,7 +214,7 @@ class UserProfileDetailAPI(generics.GenericAPIView):
 
     def get_user_profile(self, id):
         try:
-            return UserProfile.objects.get(id=id)
+            return UserProfile.objects.get(user=id)
         except:
             return None
 
@@ -206,9 +230,9 @@ class UserProfileDetailAPI(generics.GenericAPIView):
             return error_500('something went wrong')
 
     def put(self, request, id):
-        user_profile = UserProfile.objects.get(id=id)
+        user_profile = self.get_user_profile(id)
         if user_profile == None:
-            return error_404(f'User profile with id: {id} not found.')
+            return error_404(f"User with id: {id} doesn't have a profile.")
         serializer = self.serializer_class(user_profile, data=request.data)
         if serializer.is_valid():
             serializer.save()

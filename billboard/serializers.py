@@ -30,7 +30,8 @@ class BillboardRatingSerializer(serializers.ModelSerializer):
                   'production', 'paid', 'status', 'description', 'latitude', 'longitude', 'created_at', 'average_rating']
 
     def get_average_rating(self, obj):
-        average = obj.ratings.aggregate(avg_rating=Avg('rating'))['avg_rating']
+        average = obj.ratings.filter(entity_type='Billboard').aggregate(
+            avg_rating=Avg('rating'))['avg_rating']
         return average if average is not None else 0
 
 

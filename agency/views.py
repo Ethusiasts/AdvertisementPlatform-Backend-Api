@@ -5,7 +5,7 @@ from advertisement_platform.errors import error_400, error_404, error_500, succe
 from agency.models import Agency
 from django.db.models import Q, Sum, F, Case, When, Value, DecimalField
 from django.db.models import F
-from agency.serializers import AgencySerializer
+from agency.serializers import AgencyRatingSerializer, AgencySerializer
 from rest_framework.pagination import PageNumberPagination
 from rating.models import Rating
 
@@ -33,7 +33,7 @@ class Agencies(generics.GenericAPIView):
                 return success_200('No agencies found', [])
         except Exception as e:
             print(e)
-            return error_400(serialized_results.errors)
+            return error_500('internal server error')
 
     def post(self, request):
         try:
