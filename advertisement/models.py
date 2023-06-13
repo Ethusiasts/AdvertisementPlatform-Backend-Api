@@ -26,7 +26,3 @@ class Advertisement(models.Model):
     user_id = models.ForeignKey(
         User, on_delete=models.CASCADE, default=None)
     created_at = models.DateTimeField(default=timezone.now)
-
-
-class ImageChecker(models.Model):
-    image = models.ImageField()

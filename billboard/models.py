@@ -21,7 +21,7 @@ class Billboard(models.Model):
 
     daily_rate_per_sq = models.DecimalField(
         max_digits=8, decimal_places=2, default=0)
-    image = models.URLField(max_length=500)
+    image = models.URLField(max_length=1000)
     width = models.IntegerField()
     height = models.IntegerField()
     media_agency_id = models.ForeignKey(
