@@ -4,6 +4,17 @@ from payment.models import Payment
 from user.models import User
 
 
+class PaymentIntilizeSerializer(serializers.Serializer):
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.EmailField()
+    phone_number = serializers.CharField()
+    tx_ref = serializers.CharField()
+    amount = serializers.CharField()
+    currency = serializers.CharField()
+    callback_url = serializers.URLField()
+
+
 class PaymentSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
