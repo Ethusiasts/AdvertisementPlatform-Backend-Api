@@ -10,7 +10,7 @@ from advertisement_platform import settings
 from advertisement_platform.settings import PASSWORD_RESET_BASE_URL, SECRET_KEY
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204, success_login_200
 from contract.models import Contract
-from contract.serializers import ContractDetailSerializer, ContractSerializer
+from contract.serializers import ContractDetailSerializer
 from media_agency.models import MediaAgency
 from proposal.models import Proposal
 from proposal.serializers import ProposalDetailSerializer, ProposalGetSerializer

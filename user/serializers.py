@@ -12,7 +12,7 @@ class UserPostSerializer(serializers.ModelSerializer):
 class UserGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'role', 'is_verified']
+        fields = ['id', 'email', 'role', 'is_verified', 'created_at']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

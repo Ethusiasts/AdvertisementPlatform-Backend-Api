@@ -4,7 +4,7 @@ from billboard.models import Billboard
 from media_agency.models import MediaAgency
 from user.models import User
 from billboard.models import Billboard
-
+from django.utils import timezone
 # Create your models here.
 
 
@@ -27,3 +27,4 @@ class Proposal(models.Model):
     total_price = models.DecimalField(
         decimal_places=2, default=0.0, max_digits=15,)
     approved = models.PositiveIntegerField(choices=APPROVAL_CHOICES, default=1)
+    created_at = models.DateTimeField(default=timezone.now)

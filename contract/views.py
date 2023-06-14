@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_500, success_200, success_201, error_400, error_404, success_204
 from contract.models import Contract
-from contract.serializers import ContractDetailSerializer, ContractSerializer
+from contract.serializers import ContractDetailSerializer, ContractGetSerializer, ContractPostSerializer
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -10,7 +10,7 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class Contracts(generics.GenericAPIView):
-    serializer_class = ContractSerializer
+    serializer_class = ContractPostSerializer
 
     def get(self, request):
         try:
@@ -21,7 +21,7 @@ class Contracts(generics.GenericAPIView):
             paginated_results = paginator.paginate_queryset(
                 contracts, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = ContractGetSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -43,7 +43,7 @@ class Contracts(generics.GenericAPIView):
 
 class ContractDetail(generics.GenericAPIView):
 
-    serializer_class = ContractSerializer
+    serializer_class = ContractPostSerializer
 
     def get_contract(self, id):
         try:

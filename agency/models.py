@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from media_agency.models import MediaAgency
 # Create your models here.
@@ -13,6 +14,7 @@ class Agency(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     channel_name = models.CharField(max_length=50, default=None)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return str(self.media_agency_id)

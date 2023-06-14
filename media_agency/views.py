@@ -5,7 +5,7 @@ from advertisement_platform.errors import error_400, error_404, error_500, succe
 from billboard.models import Billboard
 from billboard.serializers import BillboardGetSerializer, BillboardGetSerializer
 from contract.models import Contract
-from contract.serializers import ContractDetailSerializer, ContractSerializer
+from contract.serializers import ContractDetailSerializer
 from media_agency.models import MediaAgency
 from django.core.serializers import serialize
 from rest_framework.pagination import PageNumberPagination

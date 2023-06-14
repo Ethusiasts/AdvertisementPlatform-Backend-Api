@@ -10,7 +10,7 @@ from billboard.serializers import BillboardPostSerializer, BillboardRatingSerial
 from rest_framework.pagination import PageNumberPagination
 
 from rating.models import Rating
-from rating.serializers import RatingSerializer
+from rating.serializers import RatingGetSerializer
 # Create your views here.
 
 
@@ -188,7 +188,7 @@ class SearchBillboards(generics.GenericAPIView):
 
 
 class BillboardRating(generics.GenericAPIView):
-    serializer_class = RatingSerializer
+    serializer_class = RatingGetSerializer
 
     def get(self, request, id):
         try:

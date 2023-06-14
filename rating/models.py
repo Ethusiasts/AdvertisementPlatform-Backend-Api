@@ -3,7 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from agency.models import Agency
 from billboard.models import Billboard
 from user.models import User
-
+from django.utils import timezone
 # Create your models here.
 
 
@@ -22,3 +22,4 @@ class Rating(models.Model):
     comment = models.CharField(max_length=128, default=None)
     entity_type = models.CharField(
         max_length=9, choices=ENTITY_CHOICES, default='Billboard')
+    created_at = models.DateTimeField(default=timezone.now)

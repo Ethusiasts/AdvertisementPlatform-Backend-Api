@@ -5,16 +5,16 @@ from advertisement_platform.errors import error_400, error_404, error_500, succe
 from agency.models import Agency
 from django.db.models import Q, Sum, F, Case, When, Value, DecimalField, Avg
 from django.db.models import F
-from agency.serializers import AgencyRatingSerializer, AgencySearchSerializer, AgencySerializer
+from agency.serializers import AgencyPostSerializer, AgencyRatingSerializer, AgencySearchSerializer
 from rest_framework.pagination import PageNumberPagination
 from rating.models import Rating
 
-from rating.serializers import RatingSerializer
+from rating.serializers import RatingGetSerializer
 # Create your views here.
 
 
 class Agencies(generics.GenericAPIView):
-    serializer_class = AgencySerializer
+    serializer_class = AgencyPostSerializer
 
     def get(self, request):
         try:
@@ -47,7 +47,7 @@ class Agencies(generics.GenericAPIView):
 
 
 class AgencyDetail(generics.GenericAPIView):
-    serializer_class = AgencySerializer
+    serializer_class = AgencyRatingSerializer
 
     def get_agency(self, id):
         try:
@@ -66,7 +66,7 @@ class AgencyDetail(generics.GenericAPIView):
         agency = self.get_agency(id)
         if agency == None:
             return error_404(f'agency with id: {id} not found.')
-        serializer = self.serializer_class(agency, data=request.data)
+        serializer = AgencyPostSerializer(agency, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)
@@ -161,7 +161,7 @@ class SearchAgencies(generics.GenericAPIView):
 
 
 class AgencyRating(generics.GenericAPIView):
-    serializer_class = RatingSerializer
+    serializer_class = RatingGetSerializer
 
     def get(self, request, id):
         try:
