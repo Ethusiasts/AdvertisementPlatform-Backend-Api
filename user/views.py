@@ -79,7 +79,7 @@ class LoginAPI(generics.GenericAPIView):
             if not user.is_verified:
                 return error_400('your account is not activated')
 
-            if user.role == 'Customer':
+            if user.role == 'customer':
                 has_profile = UserProfile.objects.filter(user=user).exists()
 
             if (user.role == 'landowner' or user.role == 'TV' or user.role == 'RADIO'):
