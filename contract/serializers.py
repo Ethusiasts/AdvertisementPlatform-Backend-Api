@@ -5,7 +5,14 @@ from proposal.serializers import ProposalGetSerializer
 from user.serializers import UserGetSerializer
 
 
-class ContractSerializer(serializers.ModelSerializer):
+class ContractPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contract
+        fields = ['proposal_id', 'media_agency_id', 'user_id', 'customer_signature',
+                  'agency_signature', 'total_tax', 'gross_total_fee', 'net_free']
+
+
+class ContractGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contract
         fields = '__all__'

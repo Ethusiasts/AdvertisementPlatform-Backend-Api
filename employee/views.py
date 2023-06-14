@@ -5,13 +5,13 @@ from employee.models import Employee
 from rest_framework.pagination import PageNumberPagination
 
 
-from employee.serializers import EmployeeSerializer
+from employee.serializers import EmployeeGetSerializer, EmployeePostSerializer
 
 # Create your views here.
 
 
 class Employees(generics.GenericAPIView):
-    serializer_class = EmployeeSerializer
+    serializer_class = EmployeePostSerializer
 
     def get(self, request):
         try:
@@ -21,7 +21,7 @@ class Employees(generics.GenericAPIView):
             paginated_results = paginator.paginate_queryset(
                 employees, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = EmployeeGetSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -42,7 +42,7 @@ class Employees(generics.GenericAPIView):
 
 
 class EmployeeDetail(generics.GenericAPIView):
-    serializer_class = EmployeeSerializer
+    serializer_class = EmployeeGetSerializer
 
     def get_employee(self, id):
         try:
@@ -62,7 +62,7 @@ class EmployeeDetail(generics.GenericAPIView):
         if employee == None:
             return error_404(f'Employee with id: {id} not found.')
 
-        serializer = self.serializer_class(employee, data=request.data)
+        serializer = EmployeePostSerializer(employee, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)

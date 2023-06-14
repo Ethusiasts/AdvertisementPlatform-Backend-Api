@@ -7,7 +7,7 @@ from rating.models import Rating
 from django.db.models import Q
 from django.db.models import F
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rating.serializers import RatingSerializer
+from rating.serializers import RatingGetSerializer, RatingPostSerializer
 from django.db.models import Avg
 from rest_framework.pagination import PageNumberPagination
 
@@ -25,7 +25,7 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class Ratings(generics.GenericAPIView):
-    serializer_class = RatingSerializer
+    serializer_class = RatingPostSerializer
     parser_classes = (MultiPartParser, JSONParser)
 
     def get(self, request):
@@ -37,7 +37,7 @@ class Ratings(generics.GenericAPIView):
             paginated_results = paginator.paginate_queryset(
                 ratings, request)
 
-            serialized_results = self.serializer_class(
+            serialized_results = RatingGetSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -60,7 +60,7 @@ class Ratings(generics.GenericAPIView):
 
 
 class RatingDetail(generics.GenericAPIView):
-    serializer_class = RatingSerializer
+    serializer_class = RatingPostSerializer
     parser_classes = (MultiPartParser, JSONParser)
 
     def get_rating(self, id):
@@ -86,7 +86,7 @@ class RatingDetail(generics.GenericAPIView):
             # return JsonResponse(response, status=200)
             rating = self.get_rating(id)
             if rating:
-                serializer = self.serializer_class(rating)
+                serializer = RatingGetSerializer(rating)
                 return success_200('sucess', serializer.data)
             return error_404(f'rating with id: {id} not found.')
 
