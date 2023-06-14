@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from rating.models import Rating
+from user.serializers import UserGetSerializer
 
 
 class RatingPostSerializer(serializers.ModelSerializer):
@@ -11,6 +12,8 @@ class RatingPostSerializer(serializers.ModelSerializer):
 
 
 class RatingGetSerializer(serializers.ModelSerializer):
+    user_id = UserGetSerializer()
+
     class Meta:
         model = Rating
         fields = '__all__'

@@ -7,7 +7,7 @@ from django.db.models import Avg
 class AgencyPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agency
-        fields = ['peak_hour', 'normal', 'production',
+        fields = ['id', 'peak_hour', 'normal', 'production',
                   'image', 'channel_name', 'media_agency_id']
 
 
