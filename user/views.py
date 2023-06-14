@@ -34,6 +34,7 @@ class SignUpAPI(generics.GenericAPIView):
     def post(self, request):
         try:
             serializer = self.serializer_class(data=request.data)
+            print('inn')
             if serializer.is_valid():
                 role = request.data['role']
                 if valid_role(role):
@@ -51,8 +52,7 @@ class SignUpAPI(generics.GenericAPIView):
                     )
 
                 return error_400('unknown user role')
-
-            return error_400('user already exist')
+            return error_400(serializer.errors)
 
         except Exception as e:
             print(e)
@@ -290,16 +290,23 @@ class DeleteUser(APIView):
 class GetUser(APIView):
     def get(self, request):
         try:
-            if request.method == 'GET':
-                users = User.objects.all()
-                print(users)
-                serializer = UserGetSerializer(users, many=True)
-                return success_200('sucess', serializer.data)
-            return Response({'message': 'something went wrong'})
+            users = User.objects.all()
 
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(
+                users, request)
+
+            serialized_results = UserGetSerializer(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No users found', [])
         except Exception as e:
             print(e)
-            return Response({'message': 'something went wrong'})
+            return error_400(serialized_results.errors)
 
 
 class UserAdvertisements(generics.GenericAPIView):
