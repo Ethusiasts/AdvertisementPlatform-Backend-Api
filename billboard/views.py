@@ -114,7 +114,7 @@ class SearchBillboards(generics.GenericAPIView):
             size_filter = request.GET.get('size')
 
             conditions = {
-                'has_production': request.GET.get('has_production', 'false'),
+                'production': request.GET.get('production', 'false'),
                 'daily_rate_per_sq': 'true',
             }
             # billboards = Billboard.objects.all()
@@ -184,7 +184,7 @@ class SearchBillboards(generics.GenericAPIView):
                 return success_200('No results found', [])
         except Exception as e:
             print(e)
-            return error_404('Page not found.')
+            return error_500(e)
 
 
 class BillboardRating(generics.GenericAPIView):
