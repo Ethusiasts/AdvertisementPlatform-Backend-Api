@@ -20,7 +20,7 @@ class Billboards(generics.GenericAPIView):
 
     def get(self, request):
         try:
-            billboards = Billboard.objects.all()
+            billboards = Billboard.objects.filter(paid=True)
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
