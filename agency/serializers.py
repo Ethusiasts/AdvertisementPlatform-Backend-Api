@@ -8,7 +8,7 @@ class AgencyPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agency
         fields = ['peak_hour', 'normal', 'production', 'image',
-                  'latitude', 'longitude', 'channel_name', 'media_agency_id'],
+                  'latitude', 'longitude', 'channel_name', 'media_agency_id']
 
 
 class AgencyRatingSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class AgencyRatingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agency
-        fields = ['id', 'peak_hour', 'image', 'normal', 'production', 'media_agency_id', 'image',
+        fields = ['id', 'peak_hour', 'image', 'normal', 'production', 'media_agency_id',
                   'latitude', 'longitude', 'channel_name', 'created_at', 'average_rating']
 
     def get_average_rating(self, obj):
