@@ -1,5 +1,5 @@
 from django.urls import path
-from media_agency.views import MediaAgencyBillboards, MediaAgencyContracts, MediaAgencyDetail, MediaAgencies, MediaAgencyProposals
+from media_agency.views import MediaAgencyBillboards, MediaAgencyContracts, MediaAgencyDetail, MediaAgencies, MediaAgencyProposals, MediaAgencyStats
 
 urlpatterns = [
     path('', MediaAgencies.as_view(), name="media-agencies"),
@@ -9,5 +9,7 @@ urlpatterns = [
          name="media-agency-contracts"),
     path('<int:id>/proposals/', MediaAgencyProposals.as_view(),
          name="media-agency-proposals"),
-    path('<int:id>', MediaAgencyDetail.as_view(), name="media-agency")
+    path('<int:id>', MediaAgencyDetail.as_view(), name="media-agency"),
+    path('<int:id>/stats/', MediaAgencyStats.as_view(),
+         name="media-agency-stats"),
 ]

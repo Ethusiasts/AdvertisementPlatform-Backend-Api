@@ -8,6 +8,11 @@ class UserPostSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'role', 'password']
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.pop('password', None)
+        return data
+
 
 class UserGetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,3 +40,18 @@ class ResetPasswordSerializer(serializers.Serializer):
 
     def validate_new_password(self, value):
         return value
+
+
+class UserStatsSerializer(serializers.Serializer):
+    total_advertisements = serializers.IntegerField()
+    total_contracts = serializers.IntegerField()
+    total_proposals = serializers.IntegerField()
+
+    def get_total_advertisements(self, obj):
+        return obj.get('total_advertisements')
+
+    def get_total_contracts(self, obj):
+        return obj.get('total_contracts')
+
+    def get_total_proposals(self, obj):
+        return obj.get('total_proposals')

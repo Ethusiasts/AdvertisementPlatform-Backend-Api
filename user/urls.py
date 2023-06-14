@@ -14,11 +14,13 @@ urlpatterns = [
     path('profiles/<int:id>', UserProfileDetailAPI.as_view(), name="profile_detail"),
 
     path('<int:id>/advertisements/', UserAdvertisements.as_view(),
-         name="media-agency-advertisements"),
+         name="user-advertisements"),
     path('<int:id>/contracts/', UserContracts.as_view(),
-         name="media-agency-contracts"),
+         name="user-contracts"),
     path('<int:id>/proposals/', UserProposals.as_view(),
-         name="media-agency-proposals"),
+         name="user-proposals"),
+    path('<int:id>/stats/', UserStats.as_view(),
+         name="user-stats"),
 
 
 
