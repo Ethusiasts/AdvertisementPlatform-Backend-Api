@@ -13,6 +13,7 @@ class PaymentIntilizeSerializer(serializers.Serializer):
     amount = serializers.CharField()
     currency = serializers.CharField()
     callback_url = serializers.URLField()
+    return_url = serializers.URLField()
 
 
 class PaymentSerializer(serializers.ModelSerializer):

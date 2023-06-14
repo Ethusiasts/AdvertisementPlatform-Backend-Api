@@ -139,8 +139,6 @@ class SearchAgencies(generics.GenericAPIView):
                 'peak_hour',
                 'normal',
                 'production',
-                'latitude',
-                'longitude',
                 'average_rating'
             )
 
