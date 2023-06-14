@@ -10,7 +10,7 @@ from media_agency.models import MediaAgency
 from django.core.serializers import serialize
 from rest_framework.pagination import PageNumberPagination
 import json
-from media_agency.serializers import MediaAgencyGetSerializer, MediaAgencyPostSerializer
+from media_agency.serializers import MediaAgencyGetSerializer, MediaAgencyPostSerializer, MediaAgencyStatsSerializer
 from proposal.models import Proposal
 from proposal.serializers import ProposalDetailSerializer, ProposalGetSerializer
 # Create your views here.
@@ -163,3 +163,36 @@ class MediaAgencyContracts(generics.GenericAPIView):
         except Exception as e:
             print(e)
             return error_500('Something went wrong')
+
+
+class MediaAgencyStats(generics.GenericAPIView):
+    serializer_class = MediaAgencyStatsSerializer
+
+    def get(self, request, id):
+        try:
+            contracts = Contract.objects.filter(
+                media_agency_id=id)
+            proposals = Proposal.objects.filter(
+                media_agency_id=id)
+            billboards = Billboard.objects.filter(
+                media_agency_id=id)
+
+            total_contracts = contracts.count()
+            total_proposals = proposals.count()
+            total_billboards = billboards.count()
+            print(total_billboards)
+
+            data = {
+                'total_contracts': total_contracts,
+                'total_proposals': total_proposals,
+                'total_billboards': total_billboards,
+            }
+
+            serializer = self.serializer_class(data=data)
+            if serializer.is_valid():
+                return success_200('MediaAgency statistics retrieved successfully', serializer.data)
+            return error_400(serializer.errors)
+
+        except Exception as e:
+            print(e)
+            return error_500(e)

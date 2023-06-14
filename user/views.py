@@ -17,7 +17,7 @@ from proposal.serializers import ProposalDetailSerializer, ProposalGetSerializer
 from user.forms import ResetPasswordForm
 from advertisement_platform.helpers import send_email, valid_role
 from user.models import User, UserProfile, user_reset_password_token
-from user.serializers import ForgotPasswordSerializer, LoginSerializer, ResetPasswordSerializer, UserPostSerializer, UserProfileSerializer, UserGetSerializer
+from user.serializers import ForgotPasswordSerializer, LoginSerializer, ResetPasswordSerializer, UserPostSerializer, UserProfileSerializer, UserGetSerializer, UserStatsSerializer
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.response import Response
@@ -82,7 +82,7 @@ class LoginAPI(generics.GenericAPIView):
             if user.role == 'Customer':
                 has_profile = UserProfile.objects.filter(user=user).exists()
 
-            if (user.role == 'LANDOWNER' or user.role == 'TV' or user.role == 'RADIO'):
+            if (user.role == 'landowner' or user.role == 'TV' or user.role == 'RADIO'):
                 has_profile = MediaAgency.objects.filter(user=user).exists()
 
             if has_profile:
@@ -391,3 +391,36 @@ class UserContracts(generics.GenericAPIView):
         except Exception as e:
             print(e)
             return error_500('Something went wrong')
+
+
+class UserStats(generics.GenericAPIView):
+    serializer_class = UserStatsSerializer
+
+    def get(self, request, id):
+        try:
+            contracts = Contract.objects.filter(
+                user_id=id)
+            proposals = Proposal.objects.filter(
+                user_id=id)
+            advertisements = Advertisement.objects.filter(
+                user_id=id)
+
+            total_contracts = contracts.count()
+            total_proposals = proposals.count()
+            total_advertisements = advertisements.count()
+            print(total_advertisements)
+
+            data = {
+                'total_contracts': total_contracts,
+                'total_proposals': total_proposals,
+                'total_advertisements': total_advertisements,
+            }
+
+            serializer = self.serializer_class(data=data)
+            if serializer.is_valid():
+                return success_200('User statistics retrieved successfully', serializer.data)
+            return error_400(serializer.errors)
+
+        except Exception as e:
+            print(e)
+            return error_500(e)
