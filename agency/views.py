@@ -183,49 +183,49 @@ class AgencyRecommendation(generics.GenericAPIView):
             )
             for result in results:
                 if result['average_rating']:
-                    result['average_rating'] = float(result['average_rating'])
+                    result['average_rating'] = Decimal(
+                        result['average_rating'])
                 else:
                     result['average_rating'] = 0.0
                 result['average_rating'] = result['average_rating'] or 0.0
-            print(results, 'results')
+            results = list(results)
+
             # Calculate the sum of all average_ratings
-            sum_of_average_ratings = results.aggregate(
-                sum_of_average_ratings=Sum('average_rating'))['sum_of_average_ratings']
-            print(sum_of_average_ratings, 'avg')
+            sum_of_average_ratings = sum(
+                result['average_rating'] for result in results)
+            # print(sum_of_average_ratings, 'avg')
 
-            # # Calculate the sum of all normal
-            # sum_of_normal = results.aggregate(
-            #     sum_of_normal=Sum('normal'))['sum_of_normal']
-            # print(sum_of_normal, )
+            # Calculate the sum of all normal
+            sum_of_normal = sum(
+                result['normal'] for result in results)
+            # print(sum_of_normal)
 
-            # # Get the size of the results list
-            # size = len(results)
+            # Get the size of the results list
+            size = len(results)
 
-            # # Calculate the average of average_ratings
-            # average_of_average_ratings = sum_of_average_ratings / size
+            # Calculate the average of average_ratings
+            average_of_average_ratings = sum_of_average_ratings / size
 
             # # Calculate the average of normal
-            # average_of_normal = sum_of_normal / size
+            average_of_normal = sum_of_normal / size
 
-            # print(average_of_average_ratings, average_of_normal)
-
-            # result1 = [
-            #     result for result in results if result['average_rating'] >= average_of_average_ratings
-            # ]
-            # result2 = [
-            #     result for result in results if result['normal'] <= average_of_normal
-            # ]
-            # result12 = [
-            #     result for result in results if
-            #     (result['average_rating'] >= average_of_average_ratings and
-            #      result['normal'] <= average_of_normal)
-            # ]
-            # if result12:
-            #     results = result12
-            # elif result2:
-            #     results = result2
-            # else:
-            #     results = result1
+            result1 = [
+                result for result in results if result['average_rating'] >= average_of_average_ratings
+            ]
+            result2 = [
+                result for result in results if result['normal'] <= average_of_normal
+            ]
+            result12 = [
+                result for result in results if
+                (result['average_rating'] >= average_of_average_ratings and
+                 result['normal'] <= average_of_normal)
+            ]
+            if result12:
+                results = result12
+            elif result2:
+                results = result2
+            else:
+                results = result1
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
