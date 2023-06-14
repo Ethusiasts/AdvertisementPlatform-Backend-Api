@@ -1,5 +1,6 @@
 from django.db import models
 from advertisement.models import Advertisement
+from agency.models import Agency
 from billboard.models import Billboard
 from media_agency.models import MediaAgency
 from user.models import User
@@ -14,11 +15,17 @@ class Proposal(models.Model):
         (1, 1),
         (2, 2),
     ]
+    ENTITY_CHOICES = [
+        ('Billboard', 'Billboard'),
+        ('Agency', 'Agency')
+    ]
 
     name = models.CharField(max_length=128)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    agency_id = models.ForeignKey(
+        Agency, on_delete=models.CASCADE, default=None, null=True, blank=True)
     billboard_id = models.ForeignKey(
-        Billboard, on_delete=models.CASCADE, default=None)
+        Billboard, on_delete=models.CASCADE, default=None, null=True, blank=True)
     media_agency_id = models.ForeignKey(
         MediaAgency, on_delete=models.CASCADE, default=None)
     advertisement_id = models.ForeignKey(
