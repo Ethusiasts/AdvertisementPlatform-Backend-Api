@@ -170,6 +170,29 @@ class SearchBillboards(generics.GenericAPIView):
                 'average_rating'
             )
 
+            for result in results:
+                if result['average_rating']:
+                    result['average_rating'] = float(result['average_rating'])
+                else:
+                    result['average_rating'] = 0.0
+                # result['average_rating'] = result['average_rating'] or 0.0
+
+            # # Calculate the sum of all average_ratings
+            # sum_of_average_ratings = results.aggregate(
+            #     sum_of_average_ratings=Sum('average_rating'))['sum_of_average_ratings']
+
+            # # Get the size of the results list
+            # size = len(results)
+
+            # # Calculate the average of average_ratings
+            # average_of_average_ratings = sum_of_average_ratings / size
+
+            # print(average_of_average_ratings)
+
+            # results = [
+            #     result for result in results if result['average_rating'] >= average_of_average_ratings
+            # ]
+
             paginator = PageNumberPagination()
             paginator.page_size = 6
             paginated_results = paginator.paginate_queryset(
@@ -213,3 +236,14 @@ class BillboardRating(generics.GenericAPIView):
         except Exception as e:
             print(e)
             return error_500('Something went wrong')
+
+# class BillboardRecommendation(generics.GenericAPIView):
+#     serializer_class = BillboardPostSerializer
+
+#     def get(self, request):
+#         try:
+#             billboards = Billboard.objects.filter(paid=True)
+
+#         except Exception as e:
+#             print(e)
+#             return error_500(e)
