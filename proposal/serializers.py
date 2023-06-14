@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from advertisement.serializers import AdvertisementGetSerializer
+from agency.serializers import AgencyRatingSerializer
 from billboard.serializers import BillboardGetSerializer
 from media_agency.serializers import MediaAgencyGetSerializer
 from proposal.models import Proposal
@@ -26,6 +27,7 @@ class ProposalDetailSerializer(serializers.ModelSerializer):
     user_id = UserGetSerializer()
     media_agency_id = MediaAgencyGetSerializer()
     advertisement_id = AdvertisementGetSerializer()
+    agency_id = AgencyRatingSerializer()
 
     class Meta:
         model = Proposal

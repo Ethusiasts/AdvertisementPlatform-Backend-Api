@@ -175,23 +175,6 @@ class SearchBillboards(generics.GenericAPIView):
                     result['average_rating'] = float(result['average_rating'])
                 else:
                     result['average_rating'] = 0.0
-                # result['average_rating'] = result['average_rating'] or 0.0
-
-            # # Calculate the sum of all average_ratings
-            # sum_of_average_ratings = results.aggregate(
-            #     sum_of_average_ratings=Sum('average_rating'))['sum_of_average_ratings']
-
-            # # Get the size of the results list
-            # size = len(results)
-
-            # # Calculate the average of average_ratings
-            # average_of_average_ratings = sum_of_average_ratings / size
-
-            # print(average_of_average_ratings)
-
-            # results = [
-            #     result for result in results if result['average_rating'] >= average_of_average_ratings
-            # ]
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
@@ -237,13 +220,84 @@ class BillboardRating(generics.GenericAPIView):
             print(e)
             return error_500('Something went wrong')
 
-# class BillboardRecommendation(generics.GenericAPIView):
-#     serializer_class = BillboardPostSerializer
 
-#     def get(self, request):
-#         try:
-#             billboards = Billboard.objects.filter(paid=True)
+class BillboardRecommendation(generics.GenericAPIView):
+    serializer_class = BillboardSearchSerializer
 
-#         except Exception as e:
-#             print(e)
-#             return error_500(e)
+    def get(self, request):
+        try:
+            billboards = Billboard.objects.filter(paid=True)
+            results = billboards.annotate(
+                average_rating=Avg('ratings__rating')).values(
+                'id',
+                'latitude',
+                'longitude',
+                'width',
+                'height',
+                'image',
+                'daily_rate_per_sq',
+                'production',
+                'status',
+                'description',
+                'average_rating'
+            )
+            for result in results:
+                if result['average_rating']:
+                    result['average_rating'] = float(result['average_rating'])
+                else:
+                    result['average_rating'] = 0.0
+                result['average_rating'] = result['average_rating'] or 0.0
+
+            # Calculate the sum of all average_ratings
+            sum_of_average_ratings = results.aggregate(
+                sum_of_average_ratings=Sum('average_rating'))['sum_of_average_ratings']
+
+            # Calculate the sum of all daily_rate_per_sq
+            sum_of_daily_rate_per_sq = results.aggregate(
+                sum_of_daily_rate_per_sq=Sum('daily_rate_per_sq'))['sum_of_daily_rate_per_sq']
+
+            # Get the size of the results list
+            size = len(results)
+
+            # Calculate the average of average_ratings
+            average_of_average_ratings = sum_of_average_ratings / size
+
+            # Calculate the average of daily_rate_per_sq
+            average_of_daily_rate_per_sq = sum_of_daily_rate_per_sq / size
+
+            print(average_of_average_ratings, average_of_daily_rate_per_sq)
+
+            result1 = [
+                result for result in results if result['average_rating'] >= average_of_average_ratings
+            ]
+            result2 = [
+                result for result in results if result['daily_rate_per_sq'] <= average_of_daily_rate_per_sq
+            ]
+            result12 = [
+                result for result in results if
+                (result['average_rating'] >= average_of_average_ratings and
+                 result['daily_rate_per_sq'] <= average_of_daily_rate_per_sq)
+            ]
+            if result12:
+                results = result12
+            elif result2:
+                results = result2
+            else:
+                results = result1
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(
+                results, request)
+
+            serialized_results = BillboardSearchSerializer(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+
+        except Exception as e:
+            print(e)
+            return error_500(e)

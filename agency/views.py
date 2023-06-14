@@ -142,6 +142,12 @@ class SearchAgencies(generics.GenericAPIView):
                 'average_rating'
             )
 
+            for result in results:
+                if result['average_rating']:
+                    result['average_rating'] = float(result['average_rating'])
+                else:
+                    result['average_rating'] = 0.0
+
             paginator = PageNumberPagination()
             paginator.page_size = 6
             paginated_results = paginator.paginate_queryset(results, request)
@@ -153,6 +159,87 @@ class SearchAgencies(generics.GenericAPIView):
                 return paginator.get_paginated_response(serialized_results)
             else:
                 return success_200('No results found', [])
+        except Exception as e:
+            print(e)
+            return error_500(e)
+
+
+class AgencyRecommendation(generics.GenericAPIView):
+    serializer_class = AgencySearchSerializer
+
+    def get(self, request):
+        try:
+            agencies = Agency.objects.all()
+            results = agencies.annotate(
+                average_rating=Avg('ratings__rating')).values(
+                'id',
+                'image',
+                'media_agency_id_id',
+                'channel_name',
+                'peak_hour',
+                'normal',
+                'production',
+                'average_rating'
+            )
+            for result in results:
+                if result['average_rating']:
+                    result['average_rating'] = float(result['average_rating'])
+                else:
+                    result['average_rating'] = 0.0
+                result['average_rating'] = result['average_rating'] or 0.0
+            print(results, 'results')
+            # Calculate the sum of all average_ratings
+            sum_of_average_ratings = results.aggregate(
+                sum_of_average_ratings=Sum('average_rating'))['sum_of_average_ratings']
+            print(sum_of_average_ratings, 'avg')
+
+            # # Calculate the sum of all normal
+            # sum_of_normal = results.aggregate(
+            #     sum_of_normal=Sum('normal'))['sum_of_normal']
+            # print(sum_of_normal, )
+
+            # # Get the size of the results list
+            # size = len(results)
+
+            # # Calculate the average of average_ratings
+            # average_of_average_ratings = sum_of_average_ratings / size
+
+            # # Calculate the average of normal
+            # average_of_normal = sum_of_normal / size
+
+            # print(average_of_average_ratings, average_of_normal)
+
+            # result1 = [
+            #     result for result in results if result['average_rating'] >= average_of_average_ratings
+            # ]
+            # result2 = [
+            #     result for result in results if result['normal'] <= average_of_normal
+            # ]
+            # result12 = [
+            #     result for result in results if
+            #     (result['average_rating'] >= average_of_average_ratings and
+            #      result['normal'] <= average_of_normal)
+            # ]
+            # if result12:
+            #     results = result12
+            # elif result2:
+            #     results = result2
+            # else:
+            #     results = result1
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 6
+            paginated_results = paginator.paginate_queryset(
+                results, request)
+
+            serialized_results = AgencySearchSerializer(
+                paginated_results, many=True).data
+
+            if serialized_results:
+                return paginator.get_paginated_response(serialized_results)
+            else:
+                return success_200('No results found', [])
+
         except Exception as e:
             print(e)
             return error_500(e)
