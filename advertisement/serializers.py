@@ -20,4 +20,4 @@ class AdvertisementGetSerializer(serializers.ModelSerializer):
 
 
 class ImageCheckerSerializer(serializers.Serializer):
-    image = serializers.CharField(max_length=500)
+    image = serializers.CharField(max_length=100000)
