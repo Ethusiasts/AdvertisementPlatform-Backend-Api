@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from billboard.models import Billboard
 from django.db.models import Avg
+from media_agency.models import MediaAgency
 
 from rating.models import Rating
 
@@ -12,6 +13,16 @@ class BillboardPostSerializer(serializers.ModelSerializer):
         model = Billboard
         fields = ['daily_rate_per_sq', 'image', 'width', 'height', 'production', 'status',
                   'description', 'latitude', 'longitude', 'media_agency_id', 'file']
+
+
+class BillboardPutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Billboard
+        fields = ['daily_rate_per_sq', 'image', 'width', 'height', 'production', 'status',
+                  'description', 'latitude', 'longitude', 'media_agency_id', 'file']
+
+    def to_representation(self, instance):
+        return self.validated_data
 
 
 class BillboardGetSerializer(serializers.ModelSerializer):

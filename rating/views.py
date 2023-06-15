@@ -98,7 +98,8 @@ class RatingDetail(generics.GenericAPIView):
         rating = self.get_rating(id)
         if rating == None:
             return error_404(f'rating with id: {id} not found.')
-        serializer = self.serializer_class(rating, data=request.data)
+        serializer = self.serializer_class(
+            rating, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)

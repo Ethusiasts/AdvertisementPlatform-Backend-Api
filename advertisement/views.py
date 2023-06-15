@@ -69,7 +69,8 @@ class AdvertisementDetail(generics.GenericAPIView):
         advertisement = self.get_advertisement(id)
         if advertisement == None:
             return error_404(f'advertisement with id: {id} not found.')
-        serializer = self.serializer_class(advertisement, data=request.data)
+        serializer = self.serializer_class(
+            advertisement, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)

@@ -65,7 +65,8 @@ class EmployeeDetail(generics.GenericAPIView):
         if employee == None:
             return error_404(f'Employee with id: {id} not found.')
 
-        serializer = EmployeePostSerializer(employee, data=request.data)
+        serializer = EmployeePostSerializer(
+            employee, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)
