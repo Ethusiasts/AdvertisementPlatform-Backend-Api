@@ -6,7 +6,7 @@ from user.models import User
 
 
 class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     billboard_id = models.ForeignKey(
         Billboard, on_delete=models.CASCADE, default=None)
     created_at = models.DateTimeField(default=timezone.now)

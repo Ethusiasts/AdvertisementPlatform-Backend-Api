@@ -8,9 +8,11 @@ from django.db.models import Q, F, Sum, Avg
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from billboard.serializers import BillboardPostSerializer, BillboardRatingSerializer, BillboardSearchSerializer
 from rest_framework.pagination import PageNumberPagination
+from employee.models import Employee
 
 from rating.models import Rating
 from rating.serializers import RatingGetSerializer
+from user.models import User
 # Create your views here.
 
 
@@ -42,7 +44,11 @@ class Billboards(generics.GenericAPIView):
         try:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                user = User.objects.get(id=11)
+                billboard = serializer.save()
+                billboard_result = Billboard.objects.get(id=billboard.id)
+                employee = Employee(user=user, billboard_id=billboard_result)
+                employee.save()
                 return success_201('successfully created', serializer.data)
         except Exception as e:
             print(e)

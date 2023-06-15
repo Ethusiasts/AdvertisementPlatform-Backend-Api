@@ -18,7 +18,8 @@ from django.urls import path, include
 from .swagger import schema_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('api/v1/admins/', include('admin.urls')),
     path('api/v1/auth/', include('user.urls')),
     path('api/v1/advertisements/', include('advertisement.urls')),
     path('api/v1/billboards/', include('billboard.urls')),
