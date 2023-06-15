@@ -318,7 +318,7 @@ class UserAdvertisements(generics.GenericAPIView):
     def get(self, request, id):
         try:
             advertisements = Advertisement.objects.filter(
-                user_id=id)
+                user_id=id).order_by('-created_at')
             serialized_results = advertisements
             if advertisements:
                 serializer = self.serializer_class(advertisements, many=True)
@@ -346,7 +346,7 @@ class UserProposals(generics.GenericAPIView):
     def get(self, request, id):
         try:
             proposals = Proposal.objects.filter(
-                user_id=id)
+                user_id=id).order_by('-created_at')
             serialized_results = proposals
             if proposals:
                 # serializer = self.serializer_class(proposals, many=True)
@@ -374,7 +374,7 @@ class UserContracts(generics.GenericAPIView):
     def get(self, request, id):
         try:
             contracts = Contract.objects.filter(
-                user_id=id)
+                user_id=id).order_by('-created_at')
             serialized_results = contracts
             if contracts:
                 # serializer = self.serializer_class(contracts, many=True)

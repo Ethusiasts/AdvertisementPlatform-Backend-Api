@@ -90,7 +90,7 @@ class MediaAgencyBillboards(generics.GenericAPIView):
     def get(self, request, id):
         try:
             billboards = Billboard.objects.filter(
-                media_agency_id=id)
+                media_agency_id=id).order_by('-created_at')
             serialized_results = billboards
             if billboards:
                 serializer = self.serializer_class(billboards, many=True)
@@ -118,7 +118,7 @@ class MediaAgencyAgencies(generics.GenericAPIView):
     def get(self, request, id):
         try:
             agencies = Agency.objects.filter(
-                media_agency_id=id)
+                media_agency_id=id).order_by('-created_at')
             serialized_results = agencies
             if agencies:
                 serializer = self.serializer_class(agencies, many=True)
@@ -146,7 +146,7 @@ class MediaAgencyProposals(generics.GenericAPIView):
     def get(self, request, id):
         try:
             proposals = Proposal.objects.filter(
-                media_agency_id=id)
+                media_agency_id=id).order_by('-created_at')
             serialized_results = proposals
             if proposals:
                 # serializer = self.serializer_class(proposals, many=True)
@@ -174,7 +174,7 @@ class MediaAgencyContracts(generics.GenericAPIView):
     def get(self, request, id):
         try:
             contracts = Contract.objects.filter(
-                media_agency_id=id)
+                media_agency_id=id).order_by('-created_at')
             serialized_results = contracts
             if contracts:
                 serializer = self.serializer_class(contracts, many=True)
