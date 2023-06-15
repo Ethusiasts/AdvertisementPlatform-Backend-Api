@@ -16,6 +16,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=50, blank=True)
     is_verified = models.BooleanField(
         default=False)  # verify user through email
+    is_blocked = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'email'

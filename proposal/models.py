@@ -34,4 +34,5 @@ class Proposal(models.Model):
     total_price = models.DecimalField(
         decimal_places=2, default=0.0, max_digits=15,)
     approved = models.PositiveIntegerField(choices=APPROVAL_CHOICES, default=1)
+    production = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)

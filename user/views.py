@@ -73,6 +73,9 @@ class LoginAPI(generics.GenericAPIView):
                 user = authenticate(email=email, password=password)
                 # Check if the user has a related profile
 
+            if user.is_blocked:
+                return error_400('your account is suspended')
+
             if user is None:
                 return error_400('email or password is incorrect')
 

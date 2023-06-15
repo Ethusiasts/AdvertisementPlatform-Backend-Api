@@ -12,7 +12,7 @@ class ProposalPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proposal
         fields = ['name', 'description', 'total_price', 'user_id',
-                  'billboard_id', 'agency_id', 'media_agency_id', 'advertisement_id']
+                  'billboard_id', 'agency_id', 'media_agency_id', 'advertisement_id', 'production']
 
 
 class ProposalGetSerializer(serializers.ModelSerializer):
