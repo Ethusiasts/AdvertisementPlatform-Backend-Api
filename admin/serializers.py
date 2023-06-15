@@ -12,3 +12,26 @@ class AdminBlockUserSerializer(serializers.Serializer):
 
     def get_user(self, obj):
         return obj.get('is_blocked')
+
+
+class AdminStatsSerializer(serializers.Serializer):
+    total_user = serializers.IntegerField()
+    total_landowner = serializers.IntegerField()
+    total_tv = serializers.IntegerField()
+    total_radio = serializers.IntegerField()
+    total_employee = serializers.IntegerField()
+
+    def get_total_user(self, obj):
+        return obj.get('total_user')
+
+    def get_total_landowner(self, obj):
+        return obj.get('total_landowner')
+
+    def get_total_tv(self, obj):
+        return obj.get('total_tv')
+
+    def get_total_radio(self, obj):
+        return obj.get('total_radio')
+
+    def get_total_employee(self, obj):
+        return obj.get('total_employee')
