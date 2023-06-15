@@ -133,8 +133,8 @@ class SearchBillboards(generics.GenericAPIView):
                 billboards = billboards.filter(Q(latitude__icontains=query) | Q(longitude__icontains=query) | Q(width__icontains=query) | Q(
                     height__icontains=query) | Q(daily_rate_per_sq__icontains=query)
                     | Q(production__icontains=query) | Q(status__icontains=query) | Q(description__icontains=query))
-
-            if adult_content:
+            if adult_content == 'true':
+                adult_content = True
                 billboards = billboards.filter(adult_content=adult_content)
 
             if latitude and longitude:
