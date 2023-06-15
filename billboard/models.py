@@ -36,6 +36,7 @@ class Billboard(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     file = models.URLField(default='')
+    adult_content = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

@@ -12,17 +12,7 @@ class BillboardPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Billboard
         fields = ['daily_rate_per_sq', 'image', 'width', 'height', 'production', 'status',
-                  'description', 'latitude', 'longitude', 'media_agency_id', 'file']
-
-
-class BillboardPutSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Billboard
-        fields = ['daily_rate_per_sq', 'image', 'width', 'height', 'production', 'status',
-                  'description', 'latitude', 'longitude', 'media_agency_id', 'file']
-
-    def to_representation(self, instance):
-        return self.validated_data
+                  'description', 'latitude', 'longitude', 'media_agency_id', 'file', 'adult_content']
 
 
 class BillboardGetSerializer(serializers.ModelSerializer):
@@ -38,7 +28,7 @@ class BillboardRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Billboard
         fields = ['id', 'daily_rate_per_sq', 'image', 'width', 'height', 'media_agency_id', 'approved',
-                  'production', 'paid', 'status', 'description', 'latitude', 'longitude', 'created_at', 'file', 'average_rating']
+                  'production', 'paid', 'status', 'description', 'latitude', 'longitude', 'created_at', 'file', 'adult_content', 'average_rating']
 
     def get_average_rating(self, obj):
         average = obj.ratings.filter(entity_type='Billboard').aggregate(
