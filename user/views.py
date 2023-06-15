@@ -17,7 +17,7 @@ from proposal.serializers import ProposalDetailSerializer, ProposalGetSerializer
 from user.forms import ResetPasswordForm
 from advertisement_platform.helpers import send_email, valid_role
 from user.models import User, UserProfile, user_reset_password_token
-from user.serializers import ForgotPasswordSerializer, LoginSerializer, ResetPasswordSerializer, UserPostSerializer, UserProfileSerializer, UserGetSerializer, UserStatsSerializer
+from user.serializers import ForgotPasswordSerializer, LoginSerializer, ResetPasswordSerializer, UserPostSerializer, UserProfileGetSerializer, UserProfilePostSerializer, UserGetSerializer, UserStatsSerializer
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.response import Response
@@ -186,19 +186,19 @@ class ResetPasswordAPI(generics.GenericAPIView):
 
 
 class UserProfileAPI(generics.GenericAPIView):
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfilePostSerializer
     parser_classes = (MultiPartParser, JSONParser)
 
     def get(self, request):
         try:
-            billboards = UserProfile.objects.all()
+            user_profile = UserProfile.objects.all()
 
             paginator = PageNumberPagination()
             paginator.page_size = 6
             paginated_results = paginator.paginate_queryset(
-                billboards, request)
+                user_profile, request)
 
-            serialized_results = UserProfileSerializer(
+            serialized_results = UserProfileGetSerializer(
                 paginated_results, many=True).data
 
             if serialized_results:
@@ -218,7 +218,7 @@ class UserProfileAPI(generics.GenericAPIView):
 
 
 class UserProfileDetailAPI(generics.GenericAPIView):
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileGetSerializer
     parser_classes = (MultiPartParser, JSONParser)
 
     def get_user_profile(self, id):
@@ -242,7 +242,7 @@ class UserProfileDetailAPI(generics.GenericAPIView):
         user_profile = self.get_user_profile(id)
         if user_profile == None:
             return error_404(f"User with id: {id} doesn't have a profile.")
-        serializer = self.serializer_class(user_profile, data=request.data)
+        serializer = UserProfilePostSerializer(user_profile, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)
