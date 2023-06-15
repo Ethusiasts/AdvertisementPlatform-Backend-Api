@@ -1,12 +1,13 @@
 from decimal import Decimal
 import math
+import random
 from django.shortcuts import render
 from rest_framework import generics
 from advertisement_platform.errors import error_400, error_404, error_500, success_200, success_201, success_204
 from billboard.models import Billboard
 from django.db.models import Q, F, Sum, Avg
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from billboard.serializers import BillboardGetSerializer, BillboardPostSerializer, BillboardPutSerializer, BillboardRatingSerializer, BillboardSearchSerializer
+from billboard.serializers import BillboardGetSerializer, BillboardPostSerializer, BillboardRatingSerializer, BillboardSearchSerializer
 from rest_framework.pagination import PageNumberPagination
 from employee.models import Employee
 
@@ -44,10 +45,12 @@ class Billboards(generics.GenericAPIView):
         try:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
-                user = User.objects.get(id=11)
+                employees = User.objects.filter(role='Employee')
+                employee_user = random.choice(employees)
                 billboard = serializer.save()
                 billboard_result = Billboard.objects.get(id=billboard.id)
-                employee = Employee(user=user, billboard_id=billboard_result)
+                employee = Employee(user=employee_user,
+                                    billboard_id=billboard_result)
                 employee.save()
                 return success_201('successfully created', serializer.data)
         except Exception as e:

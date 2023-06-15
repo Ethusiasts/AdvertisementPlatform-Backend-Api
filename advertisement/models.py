@@ -25,4 +25,5 @@ class Advertisement(models.Model):
     approved = models.BooleanField(default=False)
     user_id = models.ForeignKey(
         User, on_delete=models.CASCADE, default=None)
+    adult_content = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
