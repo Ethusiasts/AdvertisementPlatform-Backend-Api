@@ -21,8 +21,14 @@ class UserGetSerializer(serializers.ModelSerializer):
                   'is_verified', 'is_blocked', 'created_at']
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    user_id = UserGetSerializer()
+class UserProfilePostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+
+
+class UserProfileGetSerializer(serializers.ModelSerializer):
+    user = UserGetSerializer()
 
     class Meta:
         model = UserProfile
