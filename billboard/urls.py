@@ -3,8 +3,8 @@ from billboard.views import BillboardRecommendation, Billboards, BillboardDetail
 
 urlpatterns = [
     path('', Billboards.as_view(), name='billboards'),
-    path('<int:id>', BillboardDetail.as_view(), name='billboard'),
-    path('<int:id>/ratings/', BillboardRating.as_view(), name='billboard-rating'),
+    path('<int:id>', BillboardDetail.as_view()),
+    path('<int:id>/ratings', BillboardRating.as_view(), name='billboard-rating'),
     path('search', SearchBillboards.as_view(), name='search'),
     path('recommendations', BillboardRecommendation.as_view(), name='recommendation')
 

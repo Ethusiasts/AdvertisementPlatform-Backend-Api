@@ -67,7 +67,8 @@ class ContractDetail(generics.GenericAPIView):
             contract = self.get_contract(id)
             if contract == None:
                 return error_404(f'Contract with id: {id} not found.')
-            serializer = self.serializer_class(contract, data=request.data)
+            serializer = self.serializer_class(
+                contract, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return success_200('sucess', serializer.data)

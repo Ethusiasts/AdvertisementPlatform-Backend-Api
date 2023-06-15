@@ -67,7 +67,8 @@ class ProposalDetail(generics.GenericAPIView):
         if proposal == None:
             return error_404(f'Proposal with id: {id} not found.')
 
-        serializer = self.serializer_class(proposal, data=request.data)
+        serializer = self.serializer_class(
+            proposal, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)

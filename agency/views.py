@@ -66,7 +66,8 @@ class AgencyDetail(generics.GenericAPIView):
         agency = self.get_agency(id)
         if agency == None:
             return error_404(f'agency with id: {id} not found.')
-        serializer = AgencyPostSerializer(agency, data=request.data)
+        serializer = AgencyPostSerializer(
+            agency, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)

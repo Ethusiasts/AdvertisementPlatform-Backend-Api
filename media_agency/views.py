@@ -69,7 +69,8 @@ class MediaAgencyDetail(generics.GenericAPIView):
         media_agency = self.get_media_agency(id)
         if media_agency == None:
             return error_404(f'media_agency with id: {id} not found.')
-        serializer = MediaAgencyPostSerializer(media_agency, data=request.data)
+        serializer = MediaAgencyPostSerializer(
+            media_agency, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return success_200('sucess', serializer.data)
