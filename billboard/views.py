@@ -115,6 +115,7 @@ class SearchBillboards(generics.GenericAPIView):
     def get(self, request):
         try:
             query = request.GET.get('q')
+            adult_content = request.GET.get('adult_content')
             latitude = request.GET.get('latitude')
             longitude = request.GET.get('longitude')
             radius = float(request.GET.get('radius', '1'))
@@ -132,6 +133,9 @@ class SearchBillboards(generics.GenericAPIView):
                 billboards = billboards.filter(Q(latitude__icontains=query) | Q(longitude__icontains=query) | Q(width__icontains=query) | Q(
                     height__icontains=query) | Q(daily_rate_per_sq__icontains=query)
                     | Q(production__icontains=query) | Q(status__icontains=query) | Q(description__icontains=query))
+
+            if adult_content:
+                billboards = billboards.filter(adult_content=adult_content)
 
             if latitude and longitude:
                 latitude = float(latitude)
@@ -176,6 +180,7 @@ class SearchBillboards(generics.GenericAPIView):
                 'production',
                 'status',
                 'description',
+                'adult_content',
                 'average_rating'
             )
 
