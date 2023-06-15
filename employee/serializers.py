@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from billboard.serializers import BillboardGetSerializer
 
 from employee.models import Employee
 
@@ -10,6 +11,8 @@ class EmployeePostSerializer(serializers.ModelSerializer):
 
 
 class EmployeeGetSerializer(serializers.ModelSerializer):
+    billboard_id = BillboardGetSerializer()
+
     class Meta:
         model = Employee
         fields = '__all__'
