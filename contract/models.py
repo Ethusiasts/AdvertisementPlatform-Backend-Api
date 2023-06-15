@@ -13,8 +13,8 @@ class Contract(models.Model):
     media_agency_id = models.ForeignKey(
         MediaAgency, on_delete=models.CASCADE, default=None)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    customer_signature = models.CharField(max_length=10000, null=True)
-    agency_signature = models.CharField(max_length=10000)
+    customer_signature = models.CharField(max_length=100000, null=True)
+    agency_signature = models.CharField(max_length=100000)
     total_tax = models.DecimalField(max_digits=10, decimal_places=2)
     gross_total_fee = models.DecimalField(max_digits=10, decimal_places=2)
     net_free = models.DecimalField(max_digits=10, decimal_places=2)
