@@ -1,12 +1,13 @@
 from django.utils import timezone
 from django.db import models
 from media_agency.models import MediaAgency
+from user.models import User
 # Create your models here.
 
 
 class Agency(models.Model):
     media_agency_id = models.ForeignKey(
-        MediaAgency, on_delete=models.CASCADE, default=None)
+        User, on_delete=models.CASCADE, default=None)
     peak_hour = models.DecimalField(max_digits=10, decimal_places=2)
     normal = models.DecimalField(max_digits=10, decimal_places=2)
     production = models.DecimalField(max_digits=10, decimal_places=2)

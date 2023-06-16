@@ -3,6 +3,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from media_agency.models import MediaAgency
 from django.utils import timezone
 
+from user.models import User
+
 
 # Create your models here.
 
@@ -25,7 +27,7 @@ class Billboard(models.Model):
     width = models.IntegerField()
     height = models.IntegerField()
     media_agency_id = models.ForeignKey(
-        MediaAgency, on_delete=models.CASCADE, default=None)
+        User, on_delete=models.CASCADE, default=None)
     approved = models.PositiveIntegerField(choices=APPROVAL_CHOICES, default=1)
     production = models.DecimalField(
         max_digits=11, decimal_places=2, default=None)
