@@ -21,13 +21,14 @@ class Proposal(models.Model):
     ]
 
     name = models.CharField(max_length=128)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='proposal_user')
     agency_id = models.ForeignKey(
         Agency, on_delete=models.CASCADE, default=None, null=True, blank=True)
     billboard_id = models.ForeignKey(
         Billboard, on_delete=models.CASCADE, default=None, null=True, blank=True)
     media_agency_id = models.ForeignKey(
-        User, on_delete=models.CASCADE, default=None)
+        User, on_delete=models.CASCADE, default=None, related_name='media_proposal')
     advertisement_id = models.ForeignKey(
         Advertisement, on_delete=models.CASCADE)
     description = models.TextField()
