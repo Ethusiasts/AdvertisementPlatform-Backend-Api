@@ -21,7 +21,7 @@ class ContractGetSerializer(serializers.ModelSerializer):
 class ContractDetailSerializer(serializers.ModelSerializer):
     proposal_id = ProposalGetSerializer()
     user_id = UserGetSerializer()
-    media_agency_id = MediaAgencyGetSerializer()
+    media_agency_id = UserGetSerializer()
 
     class Meta:
         model = Contract
