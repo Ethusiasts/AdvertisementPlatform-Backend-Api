@@ -11,7 +11,7 @@ class Contract(models.Model):
     proposal_id = models.ForeignKey(
         Proposal, on_delete=models.CASCADE, default=None)
     media_agency_id = models.ForeignKey(
-        MediaAgency, on_delete=models.CASCADE, default=None)
+        User, on_delete=models.CASCADE, default=None)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     customer_signature = models.CharField(max_length=100000, null=True)
     agency_signature = models.CharField(max_length=100000)

@@ -27,7 +27,7 @@ class Proposal(models.Model):
     billboard_id = models.ForeignKey(
         Billboard, on_delete=models.CASCADE, default=None, null=True, blank=True)
     media_agency_id = models.ForeignKey(
-        MediaAgency, on_delete=models.CASCADE, default=None)
+        User, on_delete=models.CASCADE, default=None)
     advertisement_id = models.ForeignKey(
         Advertisement, on_delete=models.CASCADE)
     description = models.TextField()
