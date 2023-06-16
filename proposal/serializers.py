@@ -25,7 +25,7 @@ class ProposalGetSerializer(serializers.ModelSerializer):
 class ProposalDetailSerializer(serializers.ModelSerializer):
     billboard_id = BillboardGetSerializer()
     user_id = UserGetSerializer()
-    media_agency_id = MediaAgencyGetSerializer()
+    media_agency_id = UserGetSerializer()
     advertisement_id = AdvertisementGetSerializer()
     agency_id = AgencyRatingSerializer()
 
